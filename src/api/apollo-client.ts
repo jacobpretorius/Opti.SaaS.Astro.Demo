@@ -1,8 +1,8 @@
-import { gql } from '@apollo/client';
-import { ApolloClient, InMemoryCache } from '@apollo/client';
+import pkg from '@apollo/client';
+const {ApolloClient, InMemoryCache, gql} = pkg;
 
 const client = new ApolloClient({
-  uri: process.env.NEXT_PUBLIC_APP_GRAPHQL_API,
+  uri: import.meta.env.PUBLIC_APP_GRAPHQL_API,
   cache: new InMemoryCache(),
 });
 
@@ -124,9 +124,9 @@ export async function getStartPage(){
     `
   })
 
-  //console.log(results.data.SiteDefinition.items)
+  //console.log(results.data.StartPage.items)
 
-  return results.data.StartPage.items;
+  return results.data.StartPage.items[0];
 }
 
 const getContentFragment = `
