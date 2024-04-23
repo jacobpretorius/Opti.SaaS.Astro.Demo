@@ -6,8 +6,8 @@ const { pageContent, articles } = Astro.props;
 <div set:html={pageContent.Body} />
 <div class='hero-container'>
   {
-    pageContent.BannerImages.map((item, i) => (
-      <img src={item.ContentLink.Expanded.Url} key={i} />
+    pageContent.BannerImages.map((item) => (
+      <img src={item.ContentLink.Expanded.Url} />
     ))
   }
 </div>
