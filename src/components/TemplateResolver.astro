@@ -1,27 +1,34 @@
 ---
 // Import page types i.e CMS models
-import StartPageLayout from '../layouts/StartPage.astro';
-import StandardPageLayout from '../layouts/StandardPage.astro';
+import StartPage from '../layouts/StartPage.astro';
+import StandardPage from '../layouts/StandardPage.astro';
 import ImageRightContentPage from '../layouts/ImageRightContentPage.astro';
+import BlogPage from '../layouts/BlogPage.astro';
 
-const { pageContent } = Astro.props;
+const { pageContent, articles } = Astro.props;
 //console.log(pageContent.__typename, pageContent);
 ---
 
 {
   pageContent.__typename === 'StartPage' && (
-    <StartPageLayout pageContent={pageContent} />
+    <StartPage pageContent={pageContent} articles={articles} />
   )
 }
 
 {
   pageContent.__typename === 'StandardPage' && (
-    <StandardPageLayout pageContent={pageContent} />
+    <StandardPage pageContent={pageContent} />
   )
 }
 
 {
   pageContent.__typename === 'ImageRightContentPage' && (
     <ImageRightContentPage pageContent={pageContent} />
+  )
+}
+
+{
+  pageContent.__typename === 'BlogPage' && (
+    <BlogPage pageContent={pageContent} articles={articles} />
   )
 }

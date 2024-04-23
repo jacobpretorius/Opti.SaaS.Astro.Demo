@@ -1,5 +1,5 @@
 ---
-const { pageContent } = Astro.props;
+const { pageContent, articles } = Astro.props;
 ---
 
 <h1>🧑‍🚀 {pageContent.Heading}</h1>
@@ -10,6 +10,20 @@ const { pageContent } = Astro.props;
       <img src={item.ContentLink.Expanded.Url} key={i} />
     ))
   }
+</div>
+<div class='articles'>
+  <h2>Recent writing</h2>
+  <ul>
+    {
+      articles.map((article) => (
+        <li>
+          <a href={article.RelativePath}>
+            <h5 class='title'>{article.Heading}</h5>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
 </div>
 
 <style>
@@ -26,5 +40,18 @@ const { pageContent } = Astro.props;
     margin: 1em;
     flex: 1;
     object-fit: cover;
+  }
+  ul {
+    gap: 2rem;
+    list-style-type: decimal-leading-zero;
+    margin: 0;
+    padding: 0;
+  }
+  ul li * {
+    text-decoration: none;
+    transition: 0.2s ease;
+  }
+  ul li a {
+    display: block;
   }
 </style>
