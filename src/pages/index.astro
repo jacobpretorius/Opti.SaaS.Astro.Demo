@@ -12,7 +12,7 @@ import {
 } from '../api/apollo-client';
 
 const startPage = await getStartPage();
-console.log(startPage);
+//console.log(startPage);
 ---
 
 <!doctype html>
@@ -25,7 +25,30 @@ console.log(startPage);
     <main>
       <h1>🧑‍🚀 {startPage.Heading}</h1>
       <div set:html={startPage.Body} />
+      <div class='hero-container'>
+        {
+          startPage.BannerImages.map((item, i) => (
+            <img src={item.ContentLink.Expanded.Url} key={i} />
+          ))
+        }
+      </div>
     </main>
     <Footer />
+    <style>
+      .hero-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        overflow: hidden;
+      }
+      .hero-container img {
+        border-radius: 10px;
+        width: calc((100% - (4 * 1em)) / 4);
+        margin: 1em;
+        flex: 1;
+        object-fit: cover;
+      }
+    </style>
   </body>
 </html>
