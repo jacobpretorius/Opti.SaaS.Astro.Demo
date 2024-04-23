@@ -31,8 +31,19 @@ export async function getStaticPaths() {
   // Loop all other navitems from gql
   for (const item of navItems) {
     pages.push({
-      slug: item.RouteSegment,
-      pageContent: await resolveContent('/' + item.RouteSegment),
+      slug: item.RelativePath,
+      pageContent: await resolveContent(item.RelativePath),
+      startPageContent: startPageContent,
+      navItems,
+      articles,
+    });
+  }
+
+  // Loop all articles  from gql
+  for (const article of articles) {
+    pages.push({
+      slug: article.RelativePath,
+      pageContent: await resolveContent(article.RelativePath),
       startPageContent: startPageContent,
       navItems,
       articles,

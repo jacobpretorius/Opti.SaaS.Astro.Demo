@@ -1,16 +1,22 @@
 import rss from '@astrojs/rss';
-import { getCollection } from 'astro:content';
-import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+import {
+  getStartPage,
+	getArticles
+} from '../api/apollo-client';
 
 export async function GET(context) {
-	const posts = await getCollection('blog');
+	const startPage = await getStartPage();
+	const articles = await getArticles();
+
 	return rss({
-		title: SITE_TITLE,
-		description: SITE_DESCRIPTION,
+		title: startPage.CompanyName,
+		description: startPage.Body,
 		site: context.site,
-		items: posts.map((post) => ({
-			...post.data,
-			link: `/blog/${post.slug}/`,
+		items: articles.map((article) => ({
+			title: article.Heading,
+      pubDate: "2023-02-23T13:22:10Z",
+      content: article.MainBody,
+			link: article.RelativePath,
 		})),
 	});
 }

@@ -12,7 +12,6 @@
   "dependencies": {
     "@apollo/client": "^3.9.11",
     "@astrojs/check": "^0.5.8",
-    "@astrojs/mdx": "^2.2.4",
     "@astrojs/rss": "^4.0.5",
     "@astrojs/sitemap": "^3.1.2",
     "astro": "^4.5.16",

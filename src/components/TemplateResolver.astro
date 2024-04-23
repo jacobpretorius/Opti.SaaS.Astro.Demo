@@ -4,6 +4,7 @@ import StartPage from '../layouts/StartPage.astro';
 import StandardPage from '../layouts/StandardPage.astro';
 import ImageRightContentPage from '../layouts/ImageRightContentPage.astro';
 import BlogPage from '../layouts/BlogPage.astro';
+import ArticlePage from '../layouts/ArticlePage.astro';
 
 const { pageContent, articles } = Astro.props;
 //console.log(pageContent.__typename, pageContent);
@@ -30,5 +31,11 @@ const { pageContent, articles } = Astro.props;
 {
   pageContent.__typename === 'BlogPage' && (
     <BlogPage pageContent={pageContent} articles={articles} />
+  )
+}
+
+{
+  pageContent.__typename === 'ArticlePage' && (
+    <ArticlePage pageContent={pageContent} />
   )
 }
