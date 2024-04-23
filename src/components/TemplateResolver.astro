@@ -1,0 +1,20 @@
+---
+// Import page types i.e CMS models
+import StartPageLayout from '../layouts/StartPage.astro';
+import StandardPageLayout from '../layouts/StandardPage.astro';
+
+const { pageContent } = Astro.props;
+//console.log(pageContent.__typename);
+---
+
+{
+  pageContent.__typename === 'StartPage' && (
+    <StartPageLayout pageContent={pageContent} />
+  )
+}
+
+{
+  pageContent.__typename === 'StandardPage' && (
+    <StandardPageLayout pageContent={pageContent} />
+  )
+}

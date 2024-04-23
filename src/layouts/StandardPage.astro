@@ -1,0 +1,6 @@
+---
+const { pageContent } = Astro.props;
+---
+
+<h1>{pageContent.Name}</h1>
+<div set:html={pageContent.MainBody} />

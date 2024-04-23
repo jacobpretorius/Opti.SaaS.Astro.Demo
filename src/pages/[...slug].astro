@@ -1,0 +1,57 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import {
+  getArticles,
+  getSiteDefinition,
+  getStartPage,
+  resolveContent,
+  resolveInternalContent,
+} from '../api/apollo-client';
+
+import TemplateResolver from '../components/TemplateResolver.astro';
+
+export async function getStaticPaths() {
+  const startPageContent = await getStartPage();
+  //console.log(await resolveContent('/one'));
+
+  const pages = [
+    {
+      slug: undefined,
+      pageContent: startPageContent,
+      startPageContent: startPageContent,
+    },
+    {
+      slug: 'one',
+      pageContent: await resolveContent('/one'),
+      startPageContent: startPageContent,
+    },
+  ];
+  return pages.map(({ slug, pageContent, startPageContent }) => {
+    return {
+      params: { slug },
+      props: { pageContent, startPageContent },
+    };
+  });
+}
+
+const { pageContent, startPageContent } = Astro.props;
+---
+
+<!doctype html>
+<html lang='en'>
+  <head>
+    <BaseHead
+      title={startPageContent.Heading}
+      description={startPageContent.Heading}
+    />
+  </head>
+  <body>
+    <Header title={startPageContent.CompanyName} />
+    <main>
+      <TemplateResolver pageContent={pageContent} />
+    </main>
+    <Footer />
+  </body>
+</html>
