@@ -14,29 +14,37 @@ import TemplateResolver from '../components/TemplateResolver.astro';
 
 export async function getStaticPaths() {
   const startPageContent = await getStartPage();
-  //console.log(await resolveContent('/one'));
+  const navItems = startPageContent._children.Content.items;
 
+  // Add the start page with the hardcoded "undefined" slug Astro needs
   const pages = [
     {
       slug: undefined,
       pageContent: startPageContent,
       startPageContent: startPageContent,
-    },
-    {
-      slug: 'one',
-      pageContent: await resolveContent('/one'),
-      startPageContent: startPageContent,
+      navItems,
     },
   ];
-  return pages.map(({ slug, pageContent, startPageContent }) => {
+
+  // Loop all other navitems from gql
+  for (const item of navItems) {
+    pages.push({
+      slug: item.RouteSegment,
+      pageContent: await resolveContent('/' + item.RouteSegment),
+      startPageContent: startPageContent,
+      navItems,
+    });
+  }
+
+  return pages.map(({ slug, pageContent, startPageContent, navItems }) => {
     return {
       params: { slug },
-      props: { pageContent, startPageContent },
+      props: { pageContent, startPageContent, navItems },
     };
   });
 }
 
-const { pageContent, startPageContent } = Astro.props;
+const { pageContent, startPageContent, navItems } = Astro.props;
 ---
 
 <!doctype html>
@@ -48,7 +56,7 @@ const { pageContent, startPageContent } = Astro.props;
     />
   </head>
   <body>
-    <Header title={startPageContent.CompanyName} />
+    <Header title={startPageContent.CompanyName} navItems={navItems} />
     <main>
       <TemplateResolver pageContent={pageContent} />
     </main>

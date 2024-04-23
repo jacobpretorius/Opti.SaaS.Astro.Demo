@@ -1,16 +1,18 @@
 ---
 import HeaderLink from './HeaderLink.astro';
 
-const { title } = Astro.props;
+const { title, navItems } = Astro.props;
 ---
 
 <header>
   <nav>
     <h2><a href='/'>{title}</a></h2>
     <div class='internal-links'>
-      <HeaderLink href='/'>Home</HeaderLink>
-      <HeaderLink href='/blog'>Blog</HeaderLink>
-      <HeaderLink href='/about'>About</HeaderLink>
+      {
+        navItems.map((page) => (
+          <HeaderLink href={page.RelativePath}>{page.Name}</HeaderLink>
+        ))
+      }
     </div>
     <div class='social-links'>
       <a href='https://twitter.com/jacob_pretorius' target='_blank'>

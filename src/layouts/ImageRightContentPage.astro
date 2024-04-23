@@ -1,0 +1,27 @@
+---
+const { pageContent } = Astro.props;
+---
+
+<div class='container'>
+  <div>
+    <h1>{pageContent.Name}</h1>
+    <div set:html={pageContent.MainBody} />
+  </div>
+  <div><img src={pageContent.Image.Expanded.Url} /></div>
+</div>
+
+<style>
+  .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    overflow: hidden;
+  }
+  .container img {
+    border-radius: 10px;
+    margin: 1em;
+    flex: 1;
+    object-fit: cover;
+  }
+</style>
