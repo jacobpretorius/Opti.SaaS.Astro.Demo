@@ -1,6 +1,8 @@
 # Optimizely SaaS CMS demo using Astro.build
 
-[https://opti-saas-astro-demo.vercel.app](https://opti-saas-astro-demo.vercel.app)
+## Static Site
+
+[https://opti-saas-astro-static-demo.vercel.app](https://opti-saas-astro-static-demo.vercel.app)
 
 Stared with the Astro blog template 
 
