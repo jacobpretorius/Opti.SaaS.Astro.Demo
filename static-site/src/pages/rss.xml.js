@@ -7,16 +7,16 @@ import {
 export async function GET(context) {
 	const startPage = await getStartPage();
 	const articles = await getArticles();
-
+	
 	return rss({
-		title: startPage.CompanyName,
-		description: startPage.Body,
+		title: startPage.Heading,
+		description: startPage.Body.html,
 		site: context.site,
 		items: articles.map((article) => ({
 			title: article.Heading,
       pubDate: "2023-02-23T13:22:10Z",
       content: article.MainBody,
-			link: article.RelativePath,
+			link: article._metadata.url.default,
 		})),
 	});
 }
