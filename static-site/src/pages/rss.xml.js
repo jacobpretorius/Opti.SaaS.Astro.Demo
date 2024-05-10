@@ -15,7 +15,7 @@ export async function GET(context) {
 		items: articles.map((article) => ({
 			title: article.Heading,
       pubDate: "2023-02-23T13:22:10Z",
-      content: article.MainBody,
+      content: article.MetaDescription,
 			link: article._metadata.url.default,
 		})),
 	});
