@@ -11,73 +11,31 @@ export default client;
 export async function getArticles() {
   const results = await client.query({
     query: gql`
-      query ArticlePages {
-        ArticlePage(locale: en, orderBy: { Created: DESC }) {
-          items {
-            Created
-            ContentType
-            Heading
-            Image {
-              Url
+    query ArticlePages {
+      ArticlePage(locale: en, orderBy: { _metadata: { published: DESC } }) {
+        items {
+          Heading
+          Image {
+            url {
+              default
             }
-            Language {
-              Name
+          }
+          MetaDescription
+          _metadata {
+            displayName
+            published
+            url {
+              default
             }
-            MainBody
-            MetaDescription
-            Name
-            RelativePath
-            Status
-            Url
-            StartPublish
-            RouteSegment
-            Category {
-              Name
-            }
+            types
           }
         }
       }
+    }
     `,
   });
 
   return results.data.ArticlePage.items ?? [];
-}
-
-export async function getSiteDefinition(){
-  const results = await client.query({
-    query: gql`
-    query GetSiteDefinition {
-      SiteDefinition {
-        items {
-          Name
-          Languages {
-            DisplayName
-            Name
-            Url
-            UrlSegment
-            IsMasterLanguage
-          }
-          ContentRoots {
-            StartPage {
-              Id
-              GuidValue
-            }
-          }
-          Status
-          Id
-          Hosts {
-            Name
-          }
-        }
-        total
-      }
-    }
-    `
-  })
-
-  //console.log(results.data.SiteDefinition.items)
-
-  return results.data.SiteDefinition.items;
 }
 
 export async function getStartPage(){
@@ -88,33 +46,39 @@ export async function getStartPage(){
         items {
           Heading
           CompanyName
-          Body
+          Body {
+            html
+          }
           BannerImages {
-            ContentLink {
-              Expanded {
-                Url
+            _metadata {
+              url {
+                default
               }
             }
           }
-          DisableHeadDeploymentWebhook
           Logo {
-            Url
+            url {
+              default
+            }
           }
-          Name
-          RelativePath
-          SiteId
-          StartPublish
-          StopPublish
-          Status
-          RouteSegment
-          ContentType
-          _children {
-            Content(where: { ContentType: { eq: "page" } }) {
+          _metadata {
+            displayName
+            url {
+              hierarchical
+              default
+            }
+            published
+          }
+          _link {
+            Page {
               items {
-                RelativePath
-                RouteSegment
-                Name
-                Status
+                _metadata {
+                  displayName
+                  published
+                  url {
+                    default
+                  }
+                }
               }
             }
           }
@@ -124,65 +88,73 @@ export async function getStartPage(){
     `
   })
 
-  //console.log(results.data.StartPage.items)
-
   return results.data.StartPage.items[0];
 }
 
 const getContentFragment = `
 items {
-  Name
-  RelativePath
-  RouteSegment
-  ContentLink {
-    Id
-    WorkId
-  }
-  StartPublish
-  StopPublish
-  Url
-  ContentType
   ... on ImageRightContentPage {
-    _modified
-    MainBody
+    MainBody {
+      html
+    }
     Image {
-      Expanded {
-        Url
-        RelativePath
+      url {
+        default
       }
+    }
+    _metadata {
+      displayName
     }
   }
   ... on BlogPage {
-    _deleted
-    _modified
     Heading
-    Name
-    Description
+    Description {
+      html
+    }
+    _metadata {
+      displayName
+    }
   }
   ... on ArticlePage {
-    _deleted
-    _modified
     Heading
-    MainBody
-    Name
+    MainBody {
+      html
+    }
     MetaDescription
     Image {
-      Expanded {
-        Url
+      url {
+        default
       }
+    }
+    _metadata {
+      displayName
     }
   }
   ... on StandardPage {
-    _deleted
-    _modified
-    MainBody
-    Name
+    MainBody {
+      html
+    }
+    _metadata {
+      displayName
+    }
   }
   ... on StartPage {
     Heading
-    Name
     CompanyName
-    Body
+    Body {
+      html
+    }
+    _metadata {
+      displayName
+    }
+  }
+  _metadata {
+    displayName
+    published
+    types
+    url {
+      default
+    }
   }
 }
 `;
@@ -191,30 +163,13 @@ export async function resolveContent(url){
   const results = await client.query({
     query: gql`
     query getContentPage {
-      Content(locale: en, where: { RelativePath: { eq: "${url}" } }) {
+      Content(locale: en, where: { _metadata: { url: { default: { eq: "${url}" } } } }) {
         ${getContentFragment}
       }
     }
     `
   });
 
-  //console.log("getContentPage", results.data.Content.items[0])
-
   return results.data.Content.items[0] ?? null;
 }
 
-export async function resolveInternalContent(contentId){
-  const results = await client.query({
-    query: gql`
-    query getContentInternal {
-      Content(locale: en, where: { ContentLink: { Id : { eq: ${contentId} } } }) {
-        ${getContentFragment}
-      }
-    }
-    `
-  });
-
-  //console.log("getContentInternal", results.data.Content.items[0])
-
-  return results.data.Content.items[0] ?? null;
-}

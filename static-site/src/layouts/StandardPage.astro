@@ -2,5 +2,5 @@
 const { pageContent } = Astro.props;
 ---
 
-<h1>{pageContent.Name}</h1>
-<div set:html={pageContent.MainBody} />
+<h1>{pageContent._metadata.displayName}</h1>
+<div set:html={pageContent.MainBody.html} />

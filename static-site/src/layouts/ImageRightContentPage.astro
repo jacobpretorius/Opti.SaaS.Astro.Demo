@@ -4,10 +4,10 @@ const { pageContent } = Astro.props;
 
 <div class='container'>
   <div>
-    <h1>{pageContent.Name}</h1>
-    <div set:html={pageContent.MainBody} />
+    <h1>{pageContent._metadata.displayName}</h1>
+    <div set:html={pageContent.MainBody.html} />
   </div>
-  <div><img src={pageContent.Image.Expanded.Url} /></div>
+  <div><img src={pageContent.Image.url.default} /></div>
 </div>
 
 <style>
