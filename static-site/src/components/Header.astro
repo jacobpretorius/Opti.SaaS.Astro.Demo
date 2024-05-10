@@ -10,7 +10,7 @@ const { title, navItems } = Astro.props;
     <div class='internal-links'>
       {
         navItems.map((page) => (
-          <HeaderLink href={page.RelativePath}>{page.Name}</HeaderLink>
+          <HeaderLink href={page._metadata.url.default}>{page._metadata.displayName}</HeaderLink>
         ))
       }
     </div>

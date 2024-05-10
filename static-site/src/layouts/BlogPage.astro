@@ -2,19 +2,19 @@
 const { pageContent, articles } = Astro.props;
 ---
 
-<h1>{pageContent.Name}</h1>
-<div set:html={pageContent.Description} />
+<h1>{pageContent._metadata.displayName}</h1>
+<div set:html={pageContent.MetaDescription} />
 
 <section>
   <ul>
     {
       articles.map((article) => (
         <li>
-          <a href={article.RelativePath}>
-            <img width={720} height={360} src={article.Image.Url} alt='' />
+          <a href={article._metadata.url.default}>
+            <img width={720} height={360} src={article.Image.url.default} alt='' />
             <h4 class='title'>{article.Heading}</h4>
             <p class='description'>{article.MetaDescription}</p>
-            <p class='date'>{article.StartPublish}</p>
+            <p class='date'>{article._metadata.published}</p>
           </a>
         </li>
       ))

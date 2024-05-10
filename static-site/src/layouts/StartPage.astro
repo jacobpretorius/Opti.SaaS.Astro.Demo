@@ -3,11 +3,11 @@ const { pageContent, articles } = Astro.props;
 ---
 
 <h1>🧑‍🚀 {pageContent.Heading}</h1>
-<div set:html={pageContent.Body} />
+<div set:html={pageContent.Body.html} />
 <div class='hero-container'>
   {
     pageContent.BannerImages.map((item) => (
-      <img src={item.ContentLink.Expanded.Url} />
+      <img src={item._metadata.url.default} />
     ))
   }
 </div>
@@ -17,7 +17,7 @@ const { pageContent, articles } = Astro.props;
     {
       articles.map((article) => (
         <li>
-          <a href={article.RelativePath}>
+          <a href={article._metadata.url.default}>
             <h5 class='title'>{article.Heading}</h5>
           </a>
         </li>

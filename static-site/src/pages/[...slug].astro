@@ -12,8 +12,11 @@ import TemplateResolver from '../components/TemplateResolver.astro';
 
 export async function getStaticPaths() {
   const startPageContent = await getStartPage();
+
   const articles = await getArticles();
-  const navItems = startPageContent._children.Content.items;
+  const navItems = startPageContent._link.Page.items;
+
+  //console.log(navItems)
 
   // Add the start page with the hardcoded "undefined" slug Astro needs
   const pages = [
@@ -29,8 +32,8 @@ export async function getStaticPaths() {
   // Loop all other navitems from gql
   for (const item of navItems) {
     pages.push({
-      slug: item.RelativePath,
-      pageContent: await resolveContent(item.RelativePath),
+      slug: item._metadata.url.default,
+      pageContent: await resolveContent(item._metadata.url.default),
       startPageContent: startPageContent,
       navItems,
       articles,
@@ -40,8 +43,8 @@ export async function getStaticPaths() {
   // Loop all articles  from gql
   for (const article of articles) {
     pages.push({
-      slug: article.RelativePath,
-      pageContent: await resolveContent(article.RelativePath),
+      slug: article._metadata.url.default,
+      pageContent: await resolveContent(article._metadata.url.default),
       startPageContent: startPageContent,
       navItems,
       articles,
