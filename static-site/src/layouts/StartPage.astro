@@ -1,4 +1,5 @@
 ---
+import { Image } from 'astro:assets';
 const { pageContent, articles } = Astro.props;
 ---
 
@@ -7,7 +8,7 @@ const { pageContent, articles } = Astro.props;
 <div class='hero-container'>
   {
     pageContent.BannerImages.map((item) => (
-      <img src={item._metadata.url.default} />
+      <Image src={item._metadata.url.default} />
     ))
   }
 </div>
