@@ -1,4 +1,5 @@
 ---
+import { Image } from 'astro:assets';
 const { pageContent } = Astro.props;
 ---
 
@@ -6,7 +7,7 @@ const { pageContent } = Astro.props;
   <div class='hero-image'>
     {
       pageContent.Image.url.default && (
-        <img
+        <Image
           width={1020}
           height={510}
           src={pageContent.Image.url.default}
