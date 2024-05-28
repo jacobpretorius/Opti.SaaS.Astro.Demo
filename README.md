@@ -4,7 +4,11 @@
 
 [https://opti-saas-astro-static-demo.vercel.app](https://opti-saas-astro-static-demo.vercel.app)
 
-Stared with the Astro blog template 
+See the `/src/static-site/cms-data/` folder for an export you can import to your headless CMS with sample content and models.
+
+Stared with the Astro blog template.
+
+---
 
 ```sh
 npm create astro@latest -- --template blog

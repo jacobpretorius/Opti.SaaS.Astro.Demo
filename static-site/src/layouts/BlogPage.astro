@@ -1,4 +1,5 @@
 ---
+import { Image } from 'astro:assets';
 const { pageContent, articles } = Astro.props;
 ---
 
@@ -11,7 +12,7 @@ const { pageContent, articles } = Astro.props;
       articles.map((article) => (
         <li>
           <a href={article._metadata.url.default}>
-            <img width={720} height={360} src={article.Image.url.default} alt='' />
+            <Image width={720} height={360} src={article.Image.url.default} alt={article.Heading} />
             <h4 class='title'>{article.Heading}</h4>
             <p class='description'>{article.MetaDescription}</p>
             <p class='date'>{article._metadata.published}</p>
