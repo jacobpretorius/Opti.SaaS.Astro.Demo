@@ -8,7 +8,7 @@ const { pageContent, articles } = Astro.props;
 <div class='hero-container'>
   {
     pageContent.BannerImages.map((item) => (
-      <Image src={item._metadata.url.default} />
+      <Image src={item._metadata.url.default} alt="" inferSize={true}/>
     ))
   }
 </div>

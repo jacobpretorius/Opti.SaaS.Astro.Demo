@@ -11,7 +11,7 @@ const { pageContent } = Astro.props;
           width={1020}
           height={510}
           src={pageContent.Image.url.default}
-          alt=''
+          alt={pageContent._metadata.displayName}
         />
       )
     }
