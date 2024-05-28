@@ -1,6 +1,8 @@
-# Optimizely SaaS CMS demo using Astro.build
+# Optimizely SaaS CMS example site using [Astro](https://astro.build/)
 
-## Static Site
+This example site shows how Optimizely SaaS CMS can be used with Astro. To configure your own all you would need is to import the data into your CMS instance and plug in the relevant values in `.env` and the other configuration files.
+
+## Static Site Version
 
 [https://opti-saas-astro-static-demo.vercel.app](https://opti-saas-astro-static-demo.vercel.app)
 
