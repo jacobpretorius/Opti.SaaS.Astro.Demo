@@ -1,7 +1,10 @@
 ---
 import { Image } from 'astro:assets';
+import { ViewTransitions } from 'astro:transitions';
 const { pageContent, articles } = Astro.props;
 ---
+
+<ViewTransitions/>
 
 <h1>🧑‍🚀 {pageContent.Heading}</h1>
 <div set:html={pageContent.Body.html} />

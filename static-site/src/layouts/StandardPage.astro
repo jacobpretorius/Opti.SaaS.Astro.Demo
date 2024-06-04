@@ -1,6 +1,8 @@
 ---
+import { ViewTransitions } from 'astro:transitions';
 const { pageContent } = Astro.props;
 ---
 
+<ViewTransitions/>
 <h1>{pageContent._metadata.displayName}</h1>
 <div set:html={pageContent.MainBody.html} />
