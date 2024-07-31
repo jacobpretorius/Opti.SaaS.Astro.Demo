@@ -2,11 +2,7 @@
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import {
-  getArticles,
-  getStartPage,
-  resolveContent,
-} from '../api/apollo-client';
+import { getArticles, getStartPage, resolveContent } from '../api/apollo-client';
 
 import TemplateResolver from '../components/TemplateResolver.astro';
 
@@ -14,8 +10,7 @@ export async function getStaticPaths() {
   const startPageContent = await getStartPage();
 
   const articles = await getArticles();
-  const navItems = startPageContent._link.Page.items;
-
+  const navItems = startPageContent._link._Page.items;
   //console.log(navItems)
 
   // Add the start page with the hardcoded "undefined" slug Astro needs
@@ -51,14 +46,12 @@ export async function getStaticPaths() {
     });
   }
 
-  return pages.map(
-    ({ slug, pageContent, startPageContent, navItems, articles }) => {
-      return {
-        params: { slug },
-        props: { pageContent, startPageContent, navItems, articles },
-      };
-    }
-  );
+  return pages.map(({ slug, pageContent, startPageContent, navItems, articles }) => {
+    return {
+      params: { slug },
+      props: { pageContent, startPageContent, navItems, articles },
+    };
+  });
 }
 
 const { pageContent, startPageContent, navItems, articles } = Astro.props;
@@ -67,10 +60,7 @@ const { pageContent, startPageContent, navItems, articles } = Astro.props;
 <!doctype html>
 <html lang='en'>
   <head>
-    <BaseHead
-      title={startPageContent.Heading}
-      description={startPageContent.Heading}
-    />
+    <BaseHead title={startPageContent.Heading} description={startPageContent.Heading} />
   </head>
   <body>
     <Header title={startPageContent.CompanyName} navItems={navItems} />

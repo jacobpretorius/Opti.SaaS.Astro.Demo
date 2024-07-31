@@ -70,7 +70,7 @@ export async function getStartPage(){
             published
           }
           _link {
-            Page {
+            _Page {
               items {
                 _metadata {
                   displayName
@@ -163,13 +163,13 @@ export async function resolveContent(url){
   const results = await client.query({
     query: gql`
     query getContentPage {
-      Content(locale: en, where: { _metadata: { url: { default: { eq: "${url}" } } } }) {
+      _Content(locale: en, where: { _metadata: { url: { default: { eq: "${url}" } } } }) {
         ${getContentFragment}
       }
     }
     `
   });
 
-  return results.data.Content.items[0] ?? null;
+  return results.data._Content.items[0] ?? null;
 }
 
