@@ -8,9 +8,7 @@ const { pageContent, articles } = Astro.props;
 
 <h1 data-epi-edit='Heading'>🧑‍🚀 {pageContent.Heading}</h1>
 
-<span data-epi-edit='Body'>
-  <div set:html={pageContent.Body.html} />
-</span>
+<div set:html={pageContent.Body.html} data-epi-edit='Body' />
 
 <div class='hero-container' data-epi-edit='BannerImages'>
   {pageContent.BannerImages.map((item) => <Image src={item._metadata.url.default} alt='' inferSize={true} />)}
