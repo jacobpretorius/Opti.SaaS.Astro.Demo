@@ -219,7 +219,7 @@ export async function resolveEditContent(version: string, previewToken: string){
     `
   });
 
-  console.log('prev content', results.data, version);
+  //console.log('prev content', results.data, version);
 
   return results.data._Content.items[0] ?? null;
 }
