@@ -13,8 +13,9 @@ const { pageContent, articles } = Astro.props;
   <div set:html={pageContent.Body.html} />
 </span>
 <div class='hero-container'>
-  <span data-epi-edit='BannerImages'></span>
-  {pageContent.BannerImages.map((item) => <Image src={item._metadata.url.default} alt='' inferSize={true} />)}
+  <span data-epi-edit='BannerImages'>
+    {pageContent.BannerImages.map((item) => <Image src={item._metadata.url.default} alt='' inferSize={true} />)}
+  </span>
 </div>
 <div class='articles'>
   <h2>Recent writing</h2>
