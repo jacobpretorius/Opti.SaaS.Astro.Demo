@@ -9,9 +9,14 @@ const { pageContent } = Astro.props;
 <div class='container'>
   <div>
     <h1>{pageContent._metadata.displayName}</h1>
-    <div set:html={pageContent.MainBody.html} />
+
+    <span data-epi-edit='MainBody'>
+      <div set:html={pageContent.MainBody.html} />
+    </span>
   </div>
-  <div><Image src={pageContent.Image.url.default} alt={pageContent._metadata.displayName} inferSize={true} /></div>
+  <span data-epi-edit='Image'>
+    <div><Image src={pageContent.Image.url.default} alt={pageContent._metadata.displayName} inferSize={true} /></div>
+  </span>
 </div>
 
 <style>
