@@ -5,4 +5,7 @@ const { pageContent } = Astro.props;
 
 <ClientRouter />
 <h1>{pageContent._metadata.displayName}</h1>
-<div set:html={pageContent.MainBody.html} />
+
+<span data-epi-edit='MainBody'>
+  <div set:html={pageContent.MainBody.html} />
+</span>
