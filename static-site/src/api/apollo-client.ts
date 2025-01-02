@@ -169,6 +169,13 @@ items {
     Body {
       html
     }
+    BannerImages {
+      _metadata {
+        url {
+          default
+        }
+      }
+    }
     _metadata {
       displayName
     }
@@ -196,6 +203,23 @@ export async function resolveContent(url: string, previewToken?: string){
     }
     `
   });
+
+  return results.data._Content.items[0] ?? null;
+}
+
+export async function resolveEditContent(version: string, previewToken: string){
+  const client = previewToken ? getClient(previewToken) : defaultClient;
+  const results = await client.query({
+    query: gql`
+    query getEditContent {
+      _Content(locale: en, where: { _metadata: { version: { eq: "${version}" } } }) {
+        ${getContentFragment}
+      }
+    }
+    `
+  });
+
+  console.log('prev content', results.data, version);
 
   return results.data._Content.items[0] ?? null;
 }
