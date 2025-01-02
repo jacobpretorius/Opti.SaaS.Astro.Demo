@@ -37,24 +37,36 @@ const cmsInstanceId = import.meta.env.PUBLIC_APP_SAAS_UUID;
     <!-- CMS Preview Communication Script -->
     <script is:inline src={`https://app-${cmsInstanceId}.cms.optimizely.com/util/javascript/communicationinjector.js`}></script>
 
+    <!-- Make resolveEditContent available to client-side -->
+    <script is:inline define:vars={{ resolveEditContent }}>
+      // Expose resolveEditContent to window for client-side access
+      window.resolveEditContent = resolveEditContent;
+    </script>
+
     <!-- Content Change Listener -->
     <script is:inline>
-      window.addEventListener('optimizely:cms:contentSaved', (event) => {
+      window.addEventListener('optimizely:cms:contentSaved', async (event) => {
         const message = event.detail;
         console.log('Content saved:', message);
 
         // Extract new preview token from preview URL
         const newPreviewUrl = message.previewUrl;
         const urlParams = new URLSearchParams(new URL(newPreviewUrl).search);
-        //const newVersionToken = urlParams.get('ver');
+        const newVersionToken = urlParams.get('ver');
         const newPreviewToken = urlParams.get('preview_token');
 
-        // Construct new URL with updated tokens
-        const currentUrl = new URL(window.location.href);
-        currentUrl.searchParams.set('preview_token', newPreviewToken);
+        try {
+          // Fetch new content using resolveEditContent
+          const updatedContent = await window.resolveEditContent(newVersionToken, newPreviewToken);
 
-        // Refresh the page with new tokens to trigger server-side re-render
-        window.location.href = currentUrl.toString();
+          // Find the TemplateResolver element and update its content
+          const templateResolver = document.querySelector('main template-resolver');
+          if (templateResolver) {
+            templateResolver.setAttribute('page-content', JSON.stringify(updatedContent));
+          }
+        } catch (error) {
+          console.error('Failed to update preview content:', error);
+        }
       });
     </script>
   </head>
