@@ -13,7 +13,7 @@ const version = Astro.url.searchParams.get('ver');
 const locale = Astro.url.searchParams.get('loc') || undefined;
 const context = Astro.url.searchParams.get('ctx') || undefined;
 
-console.log('Preview mode:', version);
+//console.log('Preview mode:', version);
 
 // Redirect to non-preview route if no preview token or version
 if (!previewToken || !version) {
@@ -52,21 +52,10 @@ const cmsInstanceId = import.meta.env.PUBLIC_APP_SAAS_UUID;
         // Extract new preview token from preview URL
         const newPreviewUrl = message.previewUrl;
         const urlParams = new URLSearchParams(new URL(newPreviewUrl).search);
-        const newVersionToken = urlParams.get('ver');
-        const newPreviewToken = urlParams.get('preview_token');
+        //const newVersionToken = urlParams.get('ver');
+        //const newPreviewToken = urlParams.get('preview_token');
 
-        try {
-          // Fetch new content using resolveEditContent
-          const updatedContent = await window.resolveEditContent(newVersionToken, newPreviewToken);
-
-          // Find the TemplateResolver element and update its content
-          const templateResolver = document.querySelector('main template-resolver');
-          if (templateResolver) {
-            templateResolver.setAttribute('page-content', JSON.stringify(updatedContent));
-          }
-        } catch (error) {
-          console.error('Failed to update preview content:', error);
-        }
+        window.location.href = newPreviewUrl;
       });
     </script>
   </head>
