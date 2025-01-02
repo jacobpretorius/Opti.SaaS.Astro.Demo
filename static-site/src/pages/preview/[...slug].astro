@@ -13,7 +13,7 @@ const version = Astro.url.searchParams.get('ver');
 const locale = Astro.url.searchParams.get('loc') || undefined;
 const context = Astro.url.searchParams.get('ctx') || undefined;
 
-console.log('Preview mode: ', Astro.url);
+console.log('Preview mode: ', Astro.url.href);
 
 // Redirect to non-preview route if no preview token or version
 if (!previewToken || !version) {
