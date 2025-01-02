@@ -36,6 +36,27 @@ const cmsInstanceId = import.meta.env.PUBLIC_APP_SAAS_UUID;
     <BaseHead title={startPageContent.Heading} description={startPageContent.Heading} />
     <!-- CMS Preview Communication Script -->
     <script is:inline src={`https://app-${cmsInstanceId}.cms.optimizely.com/util/javascript/communicationinjector.js`}></script>
+
+    <!-- Content Change Listener -->
+    <script is:inline>
+      window.addEventListener('optimizely:cms:contentSaved', (event) => {
+        const message = event.detail;
+        console.log('Content saved:', message);
+
+        // Extract new preview token from preview URL
+        const newPreviewUrl = message.previewUrl;
+        const urlParams = new URLSearchParams(new URL(newPreviewUrl).search);
+        //const newVersionToken = urlParams.get('ver');
+        const newPreviewToken = urlParams.get('preview_token');
+
+        // Construct new URL with updated tokens
+        const currentUrl = new URL(window.location.href);
+        currentUrl.searchParams.set('preview_token', newPreviewToken);
+
+        // Refresh the page with new tokens to trigger server-side re-render
+        window.location.href = currentUrl.toString();
+      });
+    </script>
   </head>
   <body>
     <Header title={startPageContent.CompanyName} navItems={navItems} />
