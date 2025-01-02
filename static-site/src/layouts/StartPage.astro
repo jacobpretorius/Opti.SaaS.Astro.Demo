@@ -6,17 +6,18 @@ const { pageContent, articles } = Astro.props;
 
 <ClientRouter />
 
-<span data-epi-edit='Heading'>
-  <h1>🧑‍🚀 {pageContent.Heading}</h1>
-</span>
+<h1 data-epi-edit='Heading'>🧑‍🚀 {pageContent.Heading}</h1>
+
 <span data-epi-edit='Body'>
   <div set:html={pageContent.Body.html} />
 </span>
+
 <span data-epi-edit='BannerImages'>
   <div class='hero-container'>
     {pageContent.BannerImages.map((item) => <Image src={item._metadata.url.default} alt='' inferSize={true} />)}
   </div>
 </span>
+
 <div class='articles'>
   <h2>Recent writing</h2>
   <ul>
