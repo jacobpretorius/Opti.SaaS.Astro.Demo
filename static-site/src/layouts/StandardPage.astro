@@ -1,8 +1,8 @@
 ---
-import { ViewTransitions } from 'astro:transitions';
+import { ClientRouter } from 'astro:transitions';
 const { pageContent } = Astro.props;
 ---
 
-<ViewTransitions/>
+<ClientRouter />
 <h1>{pageContent._metadata.displayName}</h1>
 <div set:html={pageContent.MainBody.html} />

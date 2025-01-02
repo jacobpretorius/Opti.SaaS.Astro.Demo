@@ -15,8 +15,8 @@ const context = Astro.url.searchParams.get('ctx') || undefined;
 
 console.log('Preview mode:', version);
 
-// Redirect to non-preview route if no preview token
-if (!previewToken) {
+// Redirect to non-preview route if no preview token or version
+if (!previewToken || !version) {
   return Astro.redirect(`/${Astro.params.slug || ''}`);
 }
 

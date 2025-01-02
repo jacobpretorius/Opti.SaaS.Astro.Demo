@@ -1,17 +1,17 @@
 ---
 import { Image } from 'astro:assets';
-import { ViewTransitions } from 'astro:transitions';
+import { ClientRouter } from 'astro:transitions';
 const { pageContent } = Astro.props;
 ---
 
-<ViewTransitions/>
+<ClientRouter />
 
 <div class='container'>
   <div>
     <h1>{pageContent._metadata.displayName}</h1>
     <div set:html={pageContent.MainBody.html} />
   </div>
-  <div><Image src={pageContent.Image.url.default} alt={pageContent._metadata.displayName} inferSize={true}/></div>
+  <div><Image src={pageContent.Image.url.default} alt={pageContent._metadata.displayName} inferSize={true} /></div>
 </div>
 
 <style>

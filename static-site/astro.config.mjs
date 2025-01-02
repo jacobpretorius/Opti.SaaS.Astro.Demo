@@ -8,5 +8,6 @@ import vercel from '@astrojs/vercel';
 export default defineConfig({
   site: 'https://opti-saas-astro-static-demo.vercel.app',
   adapter: vercel(),
-	integrations: [sitemap()],
+  integrations: [sitemap()],
+  transitions: true,
 });
