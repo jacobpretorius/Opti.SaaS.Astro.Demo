@@ -1,14 +1,33 @@
 import pkg from '@apollo/client';
-const {ApolloClient, InMemoryCache, gql} = pkg;
+const {ApolloClient, InMemoryCache, gql, createHttpLink} = pkg;
+import { setContext } from '@apollo/client/link/context';
 
-const client = new ApolloClient({
-  uri: import.meta.env.PUBLIC_APP_GRAPHQL_API,
-  cache: new InMemoryCache(),
-});
+// Create function to get Apollo Client with optional preview token
+export function getClient(previewToken?: string) {
+  const httpLink = createHttpLink({
+    uri: import.meta.env.PUBLIC_APP_GRAPHQL_API,
+  });
 
-export default client;
+  const authLink = setContext((_, { headers }) => {
+    // Return the headers to the context so httpLink can read them
+    return {
+      headers: {
+        ...headers,
+        authorization: previewToken ? `Bearer ${previewToken}` : '',
+      }
+    }
+  });
 
-export async function getArticles() {
+  return new ApolloClient({
+    link: authLink.concat(httpLink),
+    cache: new InMemoryCache(),
+  });
+}
+
+const defaultClient = getClient();
+
+export async function getArticles(previewToken?: string) {
+  const client = previewToken ? getClient(previewToken) : defaultClient;
   const results = await client.query({
     query: gql`
     query ArticlePages {
@@ -38,7 +57,8 @@ export async function getArticles() {
   return results.data.ArticlePage.items ?? [];
 }
 
-export async function getStartPage(){
+export async function getStartPage(previewToken?: string){
+  const client = previewToken ? getClient(previewToken) : defaultClient;
   const results = await client.query({
     query: gql`
     query getStartPage {
@@ -159,7 +179,8 @@ items {
 }
 `;
 
-export async function resolveContent(url){
+export async function resolveContent(url: string, previewToken?: string){
+  const client = previewToken ? getClient(previewToken) : defaultClient;
   const results = await client.query({
     query: gql`
     query getContentPage {
@@ -172,4 +193,3 @@ export async function resolveContent(url){
 
   return results.data._Content.items[0] ?? null;
 }
-

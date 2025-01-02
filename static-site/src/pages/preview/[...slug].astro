@@ -1,0 +1,47 @@
+---
+import BaseHead from '../../components/BaseHead.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { getArticles, getStartPage, resolveContent } from '../../api/apollo-client';
+import TemplateResolver from '../../components/TemplateResolver.astro';
+
+// Get preview parameters from URL
+const previewToken = Astro.url.searchParams.get('preview_token') || undefined;
+const version = Astro.url.searchParams.get('ver') || undefined;
+const locale = Astro.url.searchParams.get('loc') || undefined;
+const context = Astro.url.searchParams.get('ctx') || undefined;
+
+// Redirect to non-preview route if no preview token
+if (!previewToken) {
+  return Astro.redirect(`/${Astro.params.slug || ''}`);
+}
+
+// Get the actual content path from the slug
+const slug = Astro.params.slug;
+const contentPath = Array.isArray(slug) ? slug.join('/') : slug || '';
+
+// Fetch content with preview token
+const startPageContent = await getStartPage(previewToken);
+const articles = await getArticles(previewToken);
+const navItems = startPageContent._link._Page.items;
+const pageContent = await resolveContent(contentPath, previewToken);
+
+// Get CMS instance ID from environment
+const cmsInstanceId = import.meta.env.PUBLIC_APP_SAAS_UUID;
+---
+
+<!doctype html>
+<html lang='en'>
+  <head>
+    <BaseHead title={startPageContent.Heading} description={startPageContent.Heading} />
+    <!-- CMS Preview Communication Script -->
+    <script is:inline src={`https://app-${cmsInstanceId}.cms.optimizely.com/util/javascript/communicationinjector.js`}></script>
+  </head>
+  <body>
+    <Header title={startPageContent.CompanyName} navItems={navItems} />
+    <main>
+      <TemplateResolver pageContent={pageContent} articles={articles} />
+    </main>
+    <Footer />
+  </body>
+</html>
