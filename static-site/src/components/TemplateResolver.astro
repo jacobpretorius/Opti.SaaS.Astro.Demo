@@ -7,35 +7,15 @@ import BlogPage from '../layouts/BlogPage.astro';
 import ArticlePage from '../layouts/ArticlePage.astro';
 
 const { pageContent, articles } = Astro.props;
-//console.log(pageContent.__typename, pageContent);
+//console.log(pageContent);
 ---
 
-{
-  pageContent.__typename === 'StartPage' && (
-    <StartPage pageContent={pageContent} articles={articles} />
-  )
-}
+{pageContent.__typename === 'StartPage' && <StartPage pageContent={pageContent} articles={articles} />}
 
-{
-  pageContent.__typename === 'StandardPage' && (
-    <StandardPage pageContent={pageContent} />
-  )
-}
+{pageContent.__typename === 'StandardPage' && <StandardPage pageContent={pageContent} />}
 
-{
-  pageContent.__typename === 'ImageRightContentPage' && (
-    <ImageRightContentPage pageContent={pageContent} />
-  )
-}
+{pageContent.__typename === 'ImageRightContentPage' && <ImageRightContentPage pageContent={pageContent} />}
 
-{
-  pageContent.__typename === 'BlogPage' && (
-    <BlogPage pageContent={pageContent} articles={articles} />
-  )
-}
+{pageContent.__typename === 'BlogPage' && <BlogPage pageContent={pageContent} articles={articles} />}
 
-{
-  pageContent.__typename === 'ArticlePage' && (
-    <ArticlePage pageContent={pageContent} />
-  )
-}
+{pageContent.__typename === 'ArticlePage' && <ArticlePage pageContent={pageContent} />}

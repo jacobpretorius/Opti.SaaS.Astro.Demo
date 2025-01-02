@@ -1,6 +1,5 @@
 import pkg from '@apollo/client';
-const { ApolloClient, InMemoryCache, gql } = pkg;
-import { createHttpLink } from '@apollo/client/core';
+const {ApolloClient, InMemoryCache, gql, createHttpLink} = pkg;
 import { setContext } from '@apollo/client/link/context';
 
 // Create function to get Apollo Client with optional preview token
@@ -89,6 +88,7 @@ export async function getStartPage(previewToken?: string){
               default
             }
             published
+            __typename
           }
           _link {
             _Page {
@@ -125,6 +125,7 @@ items {
     }
     _metadata {
       displayName
+      __typename
     }
   }
   ... on BlogPage {
@@ -134,6 +135,7 @@ items {
     }
     _metadata {
       displayName
+      __typename
     }
   }
   ... on ArticlePage {
@@ -149,6 +151,7 @@ items {
     }
     _metadata {
       displayName
+      __typename
     }
   }
   ... on StandardPage {
@@ -157,6 +160,7 @@ items {
     }
     _metadata {
       displayName
+      __typename
     }
   }
   ... on StartPage {
@@ -173,6 +177,7 @@ items {
     displayName
     published
     types
+    __typename
     url {
       default
     }
