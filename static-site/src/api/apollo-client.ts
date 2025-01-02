@@ -1,4 +1,6 @@
-import { ApolloClient, InMemoryCache, gql, createHttpLink } from '@apollo/client';
+import pkg from '@apollo/client';
+const { ApolloClient, InMemoryCache, gql } = pkg;
+import { createHttpLink } from '@apollo/client/core';
 import { setContext } from '@apollo/client/link/context';
 
 // Create function to get Apollo Client with optional preview token

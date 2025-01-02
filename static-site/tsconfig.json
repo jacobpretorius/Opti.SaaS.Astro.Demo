@@ -3,6 +3,8 @@
   "compilerOptions": {
     "strictNullChecks": true,
     "esModuleInterop": true,
-    "moduleResolution": "Bundler"
-  }
+    "moduleResolution": "node",
+    "allowJs": true
+  },
+  "exclude": ["src/api/apollo-client.ts"]
 }
