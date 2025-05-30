@@ -1,6 +1,9 @@
 ---
 import type { StartPage, ArticlePage as ArticlePageType } from '../gql/graphql';
-import Card from '../components/Card.astro';
+import { Image } from 'astro:assets';
+import { ClientRouter } from 'astro:transitions';
+// Card component is no longer used here directly for recent articles
+// import Card from '../components/Card.astro';
 
 interface Props {
   pageContent: StartPage;
@@ -8,80 +11,82 @@ interface Props {
 }
 
 const { pageContent, articles } = Astro.props;
-const logoUrl = pageContent.Logo?.url?.default;
-const recentArticles = articles?.slice(0, 3);
+// logoUrl and recentArticles are no longer used directly here in the same way.
 ---
 
-<Fragment>
-  <section class='container mx-auto py-8 text-center'>
-    {logoUrl && <img src={logoUrl} alt={`${pageContent.CompanyName ?? 'Company'} Logo`} class='mx-auto mb-6 h-16 md:h-20 w-auto' />}
-    <h1 class='text-4xl md:text-5xl lg:text-6xl font-bold mb-4' data-epi-edit='Heading'>
-      🧑‍🚀 {pageContent.Heading}
-    </h1>
-    {pageContent.Body?.html && <div class='prose prose-xl mx-auto max-w-3xl' data-epi-edit='Body' set:html={pageContent.Body.html} />}
-  </section>
+<ClientRouter />
 
-  {
-    pageContent.BannerImages && pageContent.BannerImages.length > 0 && (
-      <div class='hero-container' data-epi-edit='BannerImages'>
-        {pageContent.BannerImages.map((item) => {
-          const imageUrl = item?._metadata?.url?.default;
-          return imageUrl ? <img src={imageUrl} alt='Banner Image' class='hero-image' /> : null;
-        })}
-      </div>
-    )
-  }
+<h1 data-epi-edit='Heading'>🧑‍🚀 {pageContent.Heading}</h1>
 
-  {
-    recentArticles && recentArticles.length > 0 && (
-      <section class='py-12 md:py-16 bg-gray-50 dark:bg-gray-800'>
-        <div class='container mx-auto px-4'>
-          <h2 class='text-3xl font-bold text-center mb-10 dark:text-white'>Recent Articles</h2>
-          <div class='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8'>
-            {recentArticles.map(
-              (article) =>
-                article && (
-                  <Card
-                    title={article.Heading!}
-                    href={article._metadata?.url?.default ?? '#'}
-                    imageUrl={article.Image?.url?.default}
-                    imageAlt={article.Heading ?? undefined}
-                    date={article._metadata?.published}
-                    excerpt={article.MetaDescription}
-                  />
-                ),
-            )}
-          </div>
-        </div>
-      </section>
-    )
-  }
-</Fragment>
+{pageContent.Body?.html && <div data-epi-edit='Body' set:html={pageContent.Body.html} />}
+
+{
+  pageContent.BannerImages && pageContent.BannerImages.length > 0 && (
+    <div class='hero-container' data-epi-edit='BannerImages'>
+      {pageContent.BannerImages.map((item) => {
+        const imageUrl = item?._metadata?.url?.default; // Ensure we handle potential nulls
+        return imageUrl ? <Image src={imageUrl} alt='' inferSize={true} /> : null; // Match static site <Image>
+      })}
+    </div>
+  )
+}
+
+{
+  articles && articles.length > 0 && (
+    <div class='articles'>
+      {' '}
+      {/* Changed from section to div, class='articles' */}
+      <h2>Recent writing</h2> {/* Simplified h2 */}
+      <ul>
+        {articles.map(
+          (article) =>
+            article &&
+            article.Heading &&
+            article._metadata?.url?.default && (
+              <li>
+                <a href={article._metadata.url.default}>
+                  <h5 class='title'>{article.Heading}</h5> {/* Match static site structure */}
+                </a>
+              </li>
+            ),
+        )}
+      </ul>
+    </div>
+  )
+}
 
 <style>
+  /* .logo styles will be removed */
+
   .hero-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%;
     overflow: hidden;
-    padding: 1em 0;
+    /* padding: 1em 0; will be removed */
   }
-  .hero-container img.hero-image {
+  .hero-container img {
+    /* Changed from img.hero-image */
     border-radius: 10px;
     width: calc((100% - (4 * 1em)) / 4);
     margin: 1em;
     flex: 1;
     object-fit: cover;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); will be removed */
   }
 
+  /* .articles-section and related styles will be removed or replaced by .articles */
+
+  /* ul.article-list and related styles will be removed */
+
+  /* Keep .articles for potential future use if structure changes, but not directly used now */
   .articles {
     margin-top: 1em;
   }
   .articles ul {
     gap: 2rem;
-    list-style-type: decimal-leading-zero;
+    list-style-type: decimal-leading-zero; /* No longer default for article-list */
     margin: 0;
     padding: 0;
   }
