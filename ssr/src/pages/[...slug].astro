@@ -26,9 +26,11 @@ function htmlToPlaintext(html: string | null | undefined, maxLength: number = 16
 
 // Get the current slug from Astro.params
 const { slug } = Astro.params;
+console.log('[...slug].astro: slug =', slug);
 
 // Fetch common data for header/footer - this runs for every page request
 const startPageItem = await getStartPage();
+console.log('[...slug].astro: startPageItem =', JSON.stringify(startPageItem, null, 2));
 // Assuming getStartPage returns an object like { StartPage: { items: [ ... ] } } or similar
 // Adjust based on actual return type. For now, assuming direct item if not list.
 const navItems = startPageItem?._link?._Page?.items ?? [];
@@ -74,6 +76,9 @@ if (!pageContent && slug === undefined) {
 // Fetch articles - only if the page type is StartPage or BlogPage
 const articles: ArticlePageType[] = pageContent?.__typename === 'StartPage' || pageContent?.__typename === 'BlogPage' ? await getArticles() : [];
 
+console.log('[...slug].astro: final pageContent for TemplateResolver =', JSON.stringify(pageContent, null, 2));
+console.log('[...slug].astro: final articles for TemplateResolver =', JSON.stringify(articles, null, 2));
+
 // Determine title and description for BaseHead
 let currentPageTitle = pageContent?._metadata?.displayName ?? startPageItem?.Heading ?? 'Opti Astro Demo';
 let currentPageDescription = 'Welcome to the Opti Astro Demo site.'; // Default description
@@ -110,63 +115,26 @@ const siteName = startPageItem?.CompanyName ?? 'Opti Astro Demo';
   <head>
     <BaseHead title={`${currentPageTitle} | ${siteName}`} description={currentPageDescription} image={mainImage ?? undefined} />
     <style is:global>
-      :root {
-        --color-primary: #0070f3;
-        --color-text: #333;
+      /* We will use the :root variables from global.css */
+      /* Dark mode variables removed */
+      /* :root {
         --color-text-dark: #fff;
-        --color-bg: #fff;
         --color-bg-dark: #1a202c;
-      }
+      } */
+
       body {
-        font-family: 'Inter', sans-serif;
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        background-color: var(--color-bg);
-        color: var(--color-text);
-        transition:
-          background-color 0.3s ease,
-          color 0.3s ease;
         display: flex;
         flex-direction: column;
         min-height: 100vh;
       }
-      .dark body {
-        background-color: var(--color-bg-dark);
-        color: var(--color-text-dark);
-      }
+
+      /* .dark body rule removed */
+
       main {
         flex-grow: 1;
       }
-      .prose p {
-        margin-bottom: 1em;
-        line-height: 1.7;
-      }
-      .prose a {
-        color: var(--color-primary);
-        text-decoration: none;
-      }
-      .prose a:hover {
-        text-decoration: underline;
-      }
+      /* Prose styling will come from global.css for now */
     </style>
-    <script is:inline>
-      const theme = (() => {
-        if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
-          return localStorage.getItem('theme');
-        }
-        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-          return 'dark';
-        }
-        return 'light';
-      })();
-      if (theme === 'light') {
-        document.documentElement.classList.remove('dark');
-      } else {
-        document.documentElement.classList.add('dark');
-      }
-      window.localStorage.setItem('theme', theme);
-    </script>
     <link rel='preconnect' href='https://fonts.googleapis.com' />
     <link rel='preconnect' href='https://fonts.gstatic.com' crossorigin />
     <link href='https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap' rel='stylesheet' />
@@ -189,12 +157,5 @@ const siteName = startPageItem?.CompanyName ?? 'Opti Astro Demo';
       }
     </main>
     <Footer />
-    <script>
-      const themeToggle = document.getElementById('theme-toggle');
-      themeToggle?.addEventListener('click', () => {
-        const isDark = document.documentElement.classList.toggle('dark');
-        localStorage.setItem('theme', isDark ? 'dark' : 'light');
-      });
-    </script>
   </body>
 </html>

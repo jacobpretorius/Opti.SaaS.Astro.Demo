@@ -1,49 +1,42 @@
 ---
 import type { StartPage, ArticlePage as ArticlePageType } from '../gql/graphql';
-// import Layout from "./Layout.astro"; // REMOVED
-import Card from '../components/Card.astro'; // For recent articles, if you choose to show them
-// import { Image } from 'astro:assets'; // If using Astro Assets for local images
+import Card from '../components/Card.astro';
 
 interface Props {
   pageContent: StartPage;
   articles?: ArticlePageType[];
-  // startPageContent and navItems removed
 }
 
 const { pageContent, articles } = Astro.props;
-
-// const title = pageContent.Heading ?? 'Welcome'; // Unused, title for <BaseHead> is set in [...slug].astro
-// const description = pageContent.Body?.html ? // Unused, description for <BaseHead> is set in [...slug].astro
-//                     pageContent.Body.html.substring(0, 160) : // Example if needed for other purposes
-//                     `Welcome to ${pageContent.CompanyName ?? 'our site'}`;
-
-const bannerImage = pageContent.BannerImages?.[0]?._metadata?.url?.default;
 const logoUrl = pageContent.Logo?.url?.default;
-
-const recentArticles = articles?.slice(0, 3); // Example: show 3 recent articles
+const recentArticles = articles?.slice(0, 3);
 ---
 
 <Fragment>
-  {/* Replaced Layout with Fragment or just render content directly */}
-  {/* Hero Section */}
-  <section
-    class={`relative text-white py-20 md:py-32 px-4 ${bannerImage ? '' : 'bg-gray-700'}`}
-    style={bannerImage ? `background-image: url('${bannerImage}'); background-size: cover; background-position: center;` : ''}>
-    <div class='absolute inset-0 bg-black opacity-50'></div>
-    <div class='container mx-auto relative z-10 text-center'>
-      {logoUrl && <img src={logoUrl} alt={`${pageContent.CompanyName} Logo`} class='mx-auto mb-6 h-16 md:h-20 w-auto' />}
-      <h1 class='text-4xl md:text-5xl lg:text-6xl font-bold mb-4'>{pageContent.Heading}</h1>
-      {pageContent.Body?.html && <div class='prose prose-xl prose-invert mx-auto max-w-3xl' set:html={pageContent.Body.html} />}
-      {/* You could add a Call to Action button here */}
-    </div>
+  <section class='container mx-auto py-8 text-center'>
+    {logoUrl && <img src={logoUrl} alt={`${pageContent.CompanyName ?? 'Company'} Logo`} class='mx-auto mb-6 h-16 md:h-20 w-auto' />}
+    <h1 class='text-4xl md:text-5xl lg:text-6xl font-bold mb-4' data-epi-edit='Heading'>
+      🧑‍🚀 {pageContent.Heading}
+    </h1>
+    {pageContent.Body?.html && <div class='prose prose-xl mx-auto max-w-3xl' data-epi-edit='Body' set:html={pageContent.Body.html} />}
   </section>
 
-  {/* Optional: Recent Articles Section */}
+  {
+    pageContent.BannerImages && pageContent.BannerImages.length > 0 && (
+      <div class='hero-container' data-epi-edit='BannerImages'>
+        {pageContent.BannerImages.map((item) => {
+          const imageUrl = item?._metadata?.url?.default;
+          return imageUrl ? <img src={imageUrl} alt='Banner Image' class='hero-image' /> : null;
+        })}
+      </div>
+    )
+  }
+
   {
     recentArticles && recentArticles.length > 0 && (
       <section class='py-12 md:py-16 bg-gray-50 dark:bg-gray-800'>
         <div class='container mx-auto px-4'>
-          <h2 class='text-3xl font-bold text-center mb-10 text-gray-800 dark:text-white'>Recent Articles</h2>
+          <h2 class='text-3xl font-bold text-center mb-10 dark:text-white'>Recent Articles</h2>
           <div class='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8'>
             {recentArticles.map(
               (article) =>
@@ -63,19 +56,40 @@ const recentArticles = articles?.slice(0, 3); // Example: show 3 recent articles
       </section>
     )
   }
-
-  {/* Add other sections for StartPage as needed */}
 </Fragment>
 
-<!-- 
-  Potential data points from StartPage type:
-  pageContent.BannerImages (_metadata.url.default)
-  pageContent.Body (RichText -> html, plaintext)
-  pageContent.CompanyName (String)
-  pageContent.Heading (String)
-  pageContent.Logo (ContentReference -> url.default)
-  pageContent._metadata (IContentMetadata)
-  pageContent._link (_Page -> items -> _metadata.url.default etc. for nav)
+<style>
+  .hero-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    overflow: hidden;
+    padding: 1em 0;
+  }
+  .hero-container img.hero-image {
+    border-radius: 10px;
+    width: calc((100% - (4 * 1em)) / 4);
+    margin: 1em;
+    flex: 1;
+    object-fit: cover;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
 
-  articles (Array of ArticlePageType - if passed)
--->
+  .articles {
+    margin-top: 1em;
+  }
+  .articles ul {
+    gap: 2rem;
+    list-style-type: decimal-leading-zero;
+    margin: 0;
+    padding: 0;
+  }
+  .articles ul li * {
+    text-decoration: none;
+    transition: 0.2s ease;
+  }
+  .articles ul li a {
+    display: block;
+  }
+</style>

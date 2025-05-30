@@ -1,5 +1,5 @@
 import pkg from '@apollo/client';
-const {ApolloClient, InMemoryCache, gql, createHttpLink} = pkg;
+const { ApolloClient, InMemoryCache, gql, createHttpLink } = pkg;
 import { setContext } from '@apollo/client/link/context';
 
 // Create function to get Apollo Client with optional preview token
@@ -25,6 +25,9 @@ export function getClient(previewToken?: string) {
 }
 
 const defaultClient = getClient();
+
+// Define ImageFragment
+// const IMAGE_FRAGMENT = gql` ... `;
 
 export async function getArticles(previewToken?: string) {
   const client = previewToken ? getClient(previewToken) : defaultClient;
@@ -69,19 +72,17 @@ export async function getStartPage(previewToken?: string){
           Body {
             html
           }
-          BannerImages {
-            _metadata {
-              url {
-                default
-              }
+          BannerImages { 
+            _metadata { # Match static site query
+              url { default } 
+              # displayName was an SSR addition, static site doesn't have it here
             }
           }
-          Logo {
-            url {
-              default
-            }
+          Logo { # Match static site query
+            url { default }
+            # key was an SSR addition, static site doesn't have it here
           }
-          _metadata {
+          _metadata { # This is metadata of StartPage itself
             displayName
             url {
               hierarchical
