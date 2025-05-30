@@ -1,12 +1,11 @@
 ---
 import type { BlogPage as BlogPageType, ArticlePage as ArticlePageType } from '../gql/graphql';
-// import Layout from "./Layout.astro"; // REMOVED
-import Card from '../components/Card.astro';
+import { Image } from 'astro:assets';
+import { ClientRouter } from 'astro:transitions';
 
 interface Props {
   pageContent: BlogPageType;
   articles?: ArticlePageType[];
-  // startPageContent and navItems are not expected or used here
 }
 
 const { pageContent, articles } = Astro.props;
@@ -22,38 +21,115 @@ const { pageContent, articles } = Astro.props;
 const hasArticles = articles && articles.length > 0;
 ---
 
-<Fragment>
-  <div class='container mx-auto px-4 py-8'>
-    <header class='mb-10 md:mb-12 text-center'>
-      <h1 class='text-4xl md:text-5xl font-bold text-gray-900 dark:text-white'>{pageContent.Heading}</h1>
-      {
-        pageContent.Description?.html && (
-          <div class='mt-4 prose prose-lg mx-auto text-gray-600 dark:text-gray-400 max-w-2xl' set:html={pageContent.Description.html} />
-        )
-      }
-    </header>
+<ClientRouter />
 
-    {
-      hasArticles ? (
-        <div class='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8'>
-          {articles!.map(
-            (article) =>
-              article && (
-                <Card
-                  title={article.Heading!}
-                  href={article._metadata?.url?.default ?? '#'}
-                  imageUrl={article.Image?.url?.default}
-                  imageAlt={article.Heading ?? undefined}
-                  date={article._metadata?.published}
-                  excerpt={article.MetaDescription}
-                  tags={article.tags}
-                />
-              ),
-          )}
-        </div>
-      ) : (
-        <p class='text-center text-lg text-gray-500 dark:text-gray-400 py-12'>There are no articles at the moment. Check back soon!</p>
-      )
+<h1>{pageContent._metadata?.displayName}</h1>
+
+{/* Use pageContent.Description.html from BlogPageType */}
+{
+  pageContent.Description?.html && (
+    <span data-epi-edit='Description'>
+      <div set:html={pageContent.Description.html} />
+    </span>
+  )
+}
+
+{
+  articles && articles.length > 0 && (
+    <section>
+      <ul>
+        {articles.map(
+          (article) =>
+            article &&
+            article._metadata?.url?.default &&
+            article.Image?.url?.default &&
+            article.Heading && (
+              <li>
+                <a href={article._metadata.url.default}>
+                  <Image width={720} height={360} src={article.Image.url.default} alt={article.Heading} />
+                  <h4 class='title'>{article.Heading}</h4>
+                  {article.MetaDescription && <p class='description'>{article.MetaDescription}</p>}
+                  {article._metadata.published && <p class='date'>{article._metadata.published}</p>}
+                </a>
+              </li>
+            ),
+        )}
+      </ul>
+    </section>
+  )
+}
+
+<style>
+  /* Copied from static-site/src/layouts/BlogPage.astro */
+  main {
+    width: 960px;
+  }
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
+  ul li {
+    width: calc(50% - 1rem);
+  }
+  ul li * {
+    text-decoration: none;
+    transition: 0.2s ease;
+  }
+  ul li:first-child {
+    width: 100%;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+  ul li:first-child img {
+    width: 100%;
+  }
+  ul li:first-child .title {
+    font-size: 2.369rem;
+  }
+  ul li img {
+    margin-bottom: 0.5rem;
+    border-radius: 12px;
+  }
+  ul li a {
+    display: block;
+  }
+  .title {
+    margin: 0;
+    color: rgb(var(--black));
+    line-height: 1;
+  }
+  .date {
+    margin: 0;
+    color: rgb(var(--gray));
+  }
+  ul li a:hover h4,
+  ul li a:hover .date {
+    color: rgb(var(--accent));
+  }
+  ul a:hover img {
+    box-shadow: var(--box-shadow);
+  }
+  .description {
+    color: black;
+  }
+
+  @media (max-width: 720px) {
+    ul {
+      gap: 0.5em;
     }
-  </div>
-</Fragment>
+    ul li {
+      width: 100%;
+      text-align: center;
+    }
+    ul li:first-child {
+      margin-bottom: 0;
+    }
+    ul li:first-child .title {
+      font-size: 1.563em;
+    }
+  }
+</style>
