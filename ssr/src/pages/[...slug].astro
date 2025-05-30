@@ -1,0 +1,200 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import TemplateResolver from '../components/TemplateResolver.astro';
+import { getArticles, getStartPage, resolveContent } from '../api/apollo-client';
+import type {
+  ArticlePage as ArticlePageType,
+  StartPage as StartPageType,
+  BlogPage as BlogPageType,
+  StandardPage as StandardPageType,
+  ImageRightContentPage as ImageRightContentPageType,
+  ContentItemFieldsFragment, // Union of all page types from the fragment
+  GetContentPageQuery, // For the return type of resolveContent
+} from '../gql/graphql';
+
+// Function to strip HTML tags and get plain text (simplified)
+function htmlToPlaintext(html: string | null | undefined, maxLength: number = 160): string {
+  if (!html) return '';
+  return html
+    .replace(/<[^>]+>/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .substring(0, maxLength);
+}
+
+// Get the current slug from Astro.params
+const { slug } = Astro.params;
+
+// Fetch common data for header/footer - this runs for every page request
+const startPageItem = await getStartPage();
+// Assuming getStartPage returns an object like { StartPage: { items: [ ... ] } } or similar
+// Adjust based on actual return type. For now, assuming direct item if not list.
+const navItems = startPageItem?._link?._Page?.items ?? [];
+
+// Fetch main page content based on slug
+// If slug is undefined (homepage), use startPageItem.
+// Otherwise, resolve content using the slug.
+let pageContent: ContentItemFieldsFragment | null = null;
+if (slug === undefined) {
+  if (startPageItem && startPageItem.__typename === 'StartPage') {
+    // We need to ensure startPageItem (StartPageType) is assignable to ContentItemFieldsFragment
+    // This usually works if StartPage is part of the fragment's union and fields match.
+    // If direct assignment is problematic, we might need to re-resolve it or ensure types are compatible.
+    // For now, let's assume it's compatible or handle specific assignment if TS complains.
+    pageContent = startPageItem as unknown as ContentItemFieldsFragment; // Cast if types are structurally compatible but not directly assignable
+  } else {
+    console.error("Failed to load StartPage content for homepage or it's not of __typename 'StartPage'.");
+    return new Response('Error loading homepage data', { status: 500 });
+  }
+} else {
+  // resolveContent returns GetContentPageQuery['_Content']['items'][0]
+  // which should be compatible with ContentItemFieldsFragment
+  const resolved = await resolveContent(slug);
+  if (resolved) {
+    pageContent = resolved;
+  }
+}
+
+// Redirect to 404 if no page content is found for a given slug
+if (!pageContent && slug !== undefined) {
+  return Astro.redirect('/404'); // Make sure you have a 404.astro page
+}
+// If it's the homepage (slug is undefined) and startPageItem failed, it's also an error state.
+if (!pageContent && slug === undefined) {
+  // Handle error - perhaps render a generic error page or throw an error
+  // For now, let's assume startPageItem will always load for the home route or redirect if not.
+  // If startPageItem itself is null for the homepage, this implies a critical data fetching issue.
+  console.error('Failed to load StartPage content for homepage.');
+  // You might want to return a 500 response here or redirect.
+  return new Response('Error loading homepage data', { status: 500 });
+}
+
+// Fetch articles - only if the page type is StartPage or BlogPage
+const articles: ArticlePageType[] = pageContent?.__typename === 'StartPage' || pageContent?.__typename === 'BlogPage' ? await getArticles() : [];
+
+// Determine title and description for BaseHead
+let currentPageTitle = pageContent?._metadata?.displayName ?? startPageItem?.Heading ?? 'Opti Astro Demo';
+let currentPageDescription = 'Welcome to the Opti Astro Demo site.'; // Default description
+let mainImage = startPageItem?.BannerImages?.[0]?._metadata?.url?.default; // Default for OG from start page
+
+if (pageContent) {
+  currentPageTitle = pageContent._metadata?.displayName || currentPageTitle;
+  switch (pageContent.__typename) {
+    case 'ArticlePage':
+      currentPageDescription = pageContent.MetaDescription || currentPageDescription;
+      mainImage = pageContent.Image?.url?.default || mainImage;
+      break;
+    case 'StartPage':
+      currentPageDescription = htmlToPlaintext(pageContent.Body?.html) || currentPageDescription;
+      mainImage = pageContent.BannerImages?.[0]?._metadata?.url?.default || mainImage;
+      break;
+    case 'BlogPage':
+      currentPageDescription = htmlToPlaintext(pageContent.Description?.html) || currentPageDescription;
+      break;
+    case 'StandardPage':
+    case 'ImageRightContentPage': // Assuming these also use MainBody
+      if (pageContent.MainBody?.html) {
+        currentPageDescription = htmlToPlaintext(pageContent.MainBody.html);
+      }
+      break;
+  }
+}
+
+const siteName = startPageItem?.CompanyName ?? 'Opti Astro Demo';
+---
+
+<!doctype html>
+<html lang='en' class='scroll-smooth'>
+  <head>
+    <BaseHead title={`${currentPageTitle} | ${siteName}`} description={currentPageDescription} image={mainImage ?? undefined} />
+    <style is:global>
+      :root {
+        --color-primary: #0070f3;
+        --color-text: #333;
+        --color-text-dark: #fff;
+        --color-bg: #fff;
+        --color-bg-dark: #1a202c;
+      }
+      body {
+        font-family: 'Inter', sans-serif;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        background-color: var(--color-bg);
+        color: var(--color-text);
+        transition:
+          background-color 0.3s ease,
+          color 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+      .dark body {
+        background-color: var(--color-bg-dark);
+        color: var(--color-text-dark);
+      }
+      main {
+        flex-grow: 1;
+      }
+      .prose p {
+        margin-bottom: 1em;
+        line-height: 1.7;
+      }
+      .prose a {
+        color: var(--color-primary);
+        text-decoration: none;
+      }
+      .prose a:hover {
+        text-decoration: underline;
+      }
+    </style>
+    <script is:inline>
+      const theme = (() => {
+        if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+          return localStorage.getItem('theme');
+        }
+        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          return 'dark';
+        }
+        return 'light';
+      })();
+      if (theme === 'light') {
+        document.documentElement.classList.remove('dark');
+      } else {
+        document.documentElement.classList.add('dark');
+      }
+      window.localStorage.setItem('theme', theme);
+    </script>
+    <link rel='preconnect' href='https://fonts.googleapis.com' />
+    <link rel='preconnect' href='https://fonts.gstatic.com' crossorigin />
+    <link href='https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap' rel='stylesheet' />
+  </head>
+  <body class='antialiased'>
+    <Header title={siteName} navItems={navItems} />
+    <main>
+      {
+        pageContent ? (
+          <TemplateResolver pageContent={pageContent} articles={articles} />
+        ) : (
+          <div class='container mx-auto px-4 py-12 text-center'>
+            <h1 class='text-2xl font-bold'>Page Not Found</h1>
+            <p>Sorry, we couldn't find the page you were looking for.</p>
+            <a href='/' class='text-primary hover:underline'>
+              Go to Homepage
+            </a>
+          </div>
+        )
+      }
+    </main>
+    <Footer />
+    <script>
+      const themeToggle = document.getElementById('theme-toggle');
+      themeToggle?.addEventListener('click', () => {
+        const isDark = document.documentElement.classList.toggle('dark');
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,34 @@
+{
+  "name": "Opti.SaaS.Astro.Demo",
+  "type": "module",
+  "version": "0.1.0",
+  "engines": {
+    "node": "22.13.0"
+  },
+  "scripts": {
+    "dev": "node -r dotenv/config ./node_modules/.bin/astro dev",
+    "start": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "codegen": "node -r dotenv/config ./node_modules/.bin/graphql-codegen --config codegen.ts"
+  },
+  "dependencies": {
+    "@apollo/client": "^3.9.11",
+    "@astrojs/check": "^0.9.4",
+    "@astrojs/rss": "^4.0.10",
+    "@astrojs/sitemap": "^3.2.1",
+    "@astrojs/vercel": "^8.0.1",
+    "astro": "^5.1.1",
+    "graphql": "^16.8.1",
+    "react": "^18.2.0",
+    "typescript": "^5.2.2"
+  },
+  "devDependencies": {
+    "@graphql-codegen/cli": "^5.0.2",
+    "@graphql-codegen/typescript": "^4.0.9",
+    "@graphql-codegen/typescript-operations": "^4.2.3",
+    "@types/node": "^20.14.12",
+    "dotenv": "^16.5.0"
+  }
+}

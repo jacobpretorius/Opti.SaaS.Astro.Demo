@@ -1,0 +1,93 @@
+---
+import FormattedDate from './FormattedDate.astro';
+// If you plan to use Astro Assets for optimized local images in cards:
+// import { Image } from 'astro:assets';
+
+export interface Props {
+  title: string;
+  href: string;
+  imageUrl?: string | null;
+  imageAlt?: string;
+  date?: string | Date | null;
+  excerpt?: string | null;
+  tags?: string[];
+}
+
+const {
+  title,
+  href,
+  imageUrl,
+  imageAlt = title, // Default alt to title if not provided
+  date,
+  excerpt,
+  tags,
+} = Astro.props;
+
+const dateDisplayOptions: Intl.DateTimeFormatOptions = {
+  year: 'numeric',
+  month: 'short',
+  day: 'numeric',
+};
+---
+
+<article class='bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 ease-in-out flex flex-col h-full'>
+  {
+    imageUrl && (
+      <a href={href} class='block group'>
+        <div class='overflow-hidden aspect-video bg-gray-100 dark:bg-gray-700 rounded-t-lg'>
+          <img
+            src={imageUrl}
+            alt={imageAlt}
+            class='w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 ease-in-out'
+            loading='lazy'
+          />
+        </div>
+      </a>
+    )
+  }
+  <div class='p-5 md:p-6 flex flex-col flex-grow'>
+    <header class='mb-3'>
+      {
+        date && (
+          <div class='text-xs text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-wider'>
+            <FormattedDate dateString={date} options={dateDisplayOptions} />
+          </div>
+        )
+      }
+      <h3 class='text-lg md:text-xl font-semibold text-gray-900 dark:text-white leading-tight mb-1'>
+        <a href={href} class='hover:text-primary dark:hover:text-primary-focus transition-colors duration-200'>
+          {title}
+        </a>
+      </h3>
+    </header>
+    {excerpt && <div class='text-sm text-gray-600 dark:text-gray-300 mb-4 line-clamp-3 flex-grow'>{excerpt}</div>}
+    <footer class='mt-auto pt-4 flex flex-wrap items-center justify-between gap-2'>
+      {
+        tags && tags.length > 0 && (
+          <div class='flex flex-wrap gap-2'>
+            {tags.slice(0, 3).map((tag) => (
+              <a
+                href={`/tags/${tag.toLowerCase().replace(/\s+/g, '-')}`}
+                class='text-xs bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 px-2 py-1 rounded-full transition-colors duration-200'>
+                {tag}
+              </a>
+            ))}
+          </div>
+        )
+      }
+      <a href={href} class='text-sm text-primary hover:underline font-semibold whitespace-nowrap'> Read more &rarr; </a>
+    </footer>
+  </div>
+</article>
+
+<style>
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .aspect-video {
+    aspect-ratio: 16 / 9;
+  }
+</style>

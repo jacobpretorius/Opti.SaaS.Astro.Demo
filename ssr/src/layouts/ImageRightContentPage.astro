@@ -1,0 +1,48 @@
+---
+import type { ImageRightContentPage } from '../gql/graphql';
+// import Layout from "./Layout.astro"; // REMOVED
+// import { Image } from 'astro:assets';
+
+interface Props {
+  pageContent: ImageRightContentPage;
+  // startPageContent and navItems removed
+}
+
+const { pageContent } = Astro.props;
+
+// const title = pageContent._metadata?.displayName ?? 'Content Page'; // Unused
+// const description = pageContent.MainBody?.html ? // Unused
+//                     pageContent.MainBody.html.substring(0, 160) :
+//                     `View content for ${title}`;
+const imageUrl = pageContent.Image?.url?.default;
+---
+
+<Fragment>
+  <div class='container mx-auto px-4 py-12'>
+    <div class='grid md:grid-cols-2 gap-8 md:gap-12 items-center'>
+      <div class='prose lg:prose-lg dark:prose-invert max-w-none'>
+        <h1 class='text-3xl md:text-4xl font-bold mb-6'>{pageContent._metadata?.displayName}</h1>
+        {pageContent.MainBody?.html && <div set:html={pageContent.MainBody.html} />}
+      </div>
+      {
+        imageUrl && (
+          <div class='mt-6 md:mt-0'>
+            <img
+              src={imageUrl}
+              alt={pageContent._metadata?.displayName ?? 'Content image'}
+              class='w-full h-auto object-cover rounded-lg shadow-lg max-h-[500px]'
+            />
+            {/* If using Astro Assets: <Image src={...} ... /> */}
+          </div>
+        )
+      }
+    </div>
+  </div>
+</Fragment>
+
+<!-- 
+  Potential data points from ImageRightContentPage type:
+  pageContent.Image (ContentReference -> url.default)
+  pageContent.MainBody (RichText -> html, plaintext)
+  pageContent._metadata (IContentMetadata -> displayName)
+-->

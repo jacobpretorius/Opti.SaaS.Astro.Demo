@@ -1,0 +1,81 @@
+---
+import type { StartPage, ArticlePage as ArticlePageType } from '../gql/graphql';
+// import Layout from "./Layout.astro"; // REMOVED
+import Card from '../components/Card.astro'; // For recent articles, if you choose to show them
+// import { Image } from 'astro:assets'; // If using Astro Assets for local images
+
+interface Props {
+  pageContent: StartPage;
+  articles?: ArticlePageType[];
+  // startPageContent and navItems removed
+}
+
+const { pageContent, articles } = Astro.props;
+
+// const title = pageContent.Heading ?? 'Welcome'; // Unused, title for <BaseHead> is set in [...slug].astro
+// const description = pageContent.Body?.html ? // Unused, description for <BaseHead> is set in [...slug].astro
+//                     pageContent.Body.html.substring(0, 160) : // Example if needed for other purposes
+//                     `Welcome to ${pageContent.CompanyName ?? 'our site'}`;
+
+const bannerImage = pageContent.BannerImages?.[0]?._metadata?.url?.default;
+const logoUrl = pageContent.Logo?.url?.default;
+
+const recentArticles = articles?.slice(0, 3); // Example: show 3 recent articles
+---
+
+<Fragment>
+  {/* Replaced Layout with Fragment or just render content directly */}
+  {/* Hero Section */}
+  <section
+    class={`relative text-white py-20 md:py-32 px-4 ${bannerImage ? '' : 'bg-gray-700'}`}
+    style={bannerImage ? `background-image: url('${bannerImage}'); background-size: cover; background-position: center;` : ''}>
+    <div class='absolute inset-0 bg-black opacity-50'></div>
+    <div class='container mx-auto relative z-10 text-center'>
+      {logoUrl && <img src={logoUrl} alt={`${pageContent.CompanyName} Logo`} class='mx-auto mb-6 h-16 md:h-20 w-auto' />}
+      <h1 class='text-4xl md:text-5xl lg:text-6xl font-bold mb-4'>{pageContent.Heading}</h1>
+      {pageContent.Body?.html && <div class='prose prose-xl prose-invert mx-auto max-w-3xl' set:html={pageContent.Body.html} />}
+      {/* You could add a Call to Action button here */}
+    </div>
+  </section>
+
+  {/* Optional: Recent Articles Section */}
+  {
+    recentArticles && recentArticles.length > 0 && (
+      <section class='py-12 md:py-16 bg-gray-50 dark:bg-gray-800'>
+        <div class='container mx-auto px-4'>
+          <h2 class='text-3xl font-bold text-center mb-10 text-gray-800 dark:text-white'>Recent Articles</h2>
+          <div class='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8'>
+            {recentArticles.map(
+              (article) =>
+                article && (
+                  <Card
+                    title={article.Heading!}
+                    href={article._metadata?.url?.default ?? '#'}
+                    imageUrl={article.Image?.url?.default}
+                    imageAlt={article.Heading ?? undefined}
+                    date={article._metadata?.published}
+                    excerpt={article.MetaDescription}
+                  />
+                ),
+            )}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  {/* Add other sections for StartPage as needed */}
+</Fragment>
+
+<!-- 
+  Potential data points from StartPage type:
+  pageContent.BannerImages (_metadata.url.default)
+  pageContent.Body (RichText -> html, plaintext)
+  pageContent.CompanyName (String)
+  pageContent.Heading (String)
+  pageContent.Logo (ContentReference -> url.default)
+  pageContent._metadata (IContentMetadata)
+  pageContent._link (_Page -> items -> _metadata.url.default etc. for nav)
+
+  articles (Array of ArticlePageType - if passed)
+-->

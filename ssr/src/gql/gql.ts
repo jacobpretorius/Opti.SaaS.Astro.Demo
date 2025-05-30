@@ -1,0 +1,70 @@
+/* eslint-disable */
+import * as types from './graphql';
+import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
+
+/**
+ * Map of all GraphQL operations in the project.
+ *
+ * This map has several performance disadvantages:
+ * 1. It is not tree-shakeable, so it will include all operations in the project.
+ * 2. It is not minifiable, so the string of a GraphQL query will be multiple times inside the bundle.
+ * 3. It does not support dead code elimination, so it will add unused operations.
+ *
+ * Therefore it is highly recommended to use the babel or swc plugin for production.
+ * Learn more about it here: https://the-guild.dev/graphql/codegen/plugins/presets/preset-client#reducing-bundle-size
+ */
+type Documents = {
+    "\n    query ArticlePages {\n      ArticlePage(locale: en, orderBy: { _metadata: { published: DESC } }) {\n        items {\n          Heading\n          Image {\n            url {\n              default\n            }\n          }\n          MetaDescription\n          _metadata {\n            displayName\n            published\n            url {\n              default\n            }\n            types\n          }\n        }\n      }\n    }\n    ": typeof types.ArticlePagesDocument,
+    "\n    query getStartPage {\n      StartPage(locale: ALL) {\n        items {\n          Heading\n          CompanyName\n          Body {\n            html\n          }\n          BannerImages {\n            _metadata {\n              url {\n                default\n              }\n            }\n          }\n          Logo {\n            url {\n              default\n            }\n          }\n          _metadata {\n            displayName\n            url {\n              hierarchical\n              default\n            }\n            published\n            __typename\n          }\n          _link {\n            _Page {\n              items {\n                _metadata {\n                  displayName\n                  published\n                  url {\n                    default\n                  }\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n    ": typeof types.GetStartPageDocument,
+    "\n  fragment ContentItemFields on _IContent { \n    _metadata {\n      displayName\n      published\n      types\n      __typename\n      url {\n        default\n      }\n    }\n    ... on ImageRightContentPage {\n      MainBody {\n        html\n      }\n      Image {\n        url {\n          default\n        }\n      }\n    }\n    ... on BlogPage {\n      Heading\n      Description {\n        html\n      }\n    }\n    ... on ArticlePage {\n      Heading\n      MainBody {\n        html\n      }\n      MetaDescription\n      Image {\n        url {\n          default\n        }\n      }\n    }\n    ... on StandardPage {\n      MainBody {\n        html\n      }\n    }\n    ... on StartPage {\n      Heading\n      CompanyName\n      Body {\n        html\n      }\n      BannerImages {\n        _metadata {\n          url {\n            default\n          }\n        }\n      }\n    }\n  }\n": typeof types.ContentItemFieldsFragmentDoc,
+    "\n      query getContentPage($url: String!) {\n        _Content(locale: en, where: { _metadata: { url: { default: { eq: $url } } } }) {\n          items {\n            ...ContentItemFields\n          }\n        }\n      }\n      \n    ": typeof types.GetContentPageDocument,
+    "\n      query getEditContent($version: String!) {\n        _Content(locale: en, where: { _metadata: { version: { eq: $version } } }) {\n          items {\n            ...ContentItemFields\n          }\n        }\n      }\n      \n    ": typeof types.GetEditContentDocument,
+};
+const documents: Documents = {
+    "\n    query ArticlePages {\n      ArticlePage(locale: en, orderBy: { _metadata: { published: DESC } }) {\n        items {\n          Heading\n          Image {\n            url {\n              default\n            }\n          }\n          MetaDescription\n          _metadata {\n            displayName\n            published\n            url {\n              default\n            }\n            types\n          }\n        }\n      }\n    }\n    ": types.ArticlePagesDocument,
+    "\n    query getStartPage {\n      StartPage(locale: ALL) {\n        items {\n          Heading\n          CompanyName\n          Body {\n            html\n          }\n          BannerImages {\n            _metadata {\n              url {\n                default\n              }\n            }\n          }\n          Logo {\n            url {\n              default\n            }\n          }\n          _metadata {\n            displayName\n            url {\n              hierarchical\n              default\n            }\n            published\n            __typename\n          }\n          _link {\n            _Page {\n              items {\n                _metadata {\n                  displayName\n                  published\n                  url {\n                    default\n                  }\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n    ": types.GetStartPageDocument,
+    "\n  fragment ContentItemFields on _IContent { \n    _metadata {\n      displayName\n      published\n      types\n      __typename\n      url {\n        default\n      }\n    }\n    ... on ImageRightContentPage {\n      MainBody {\n        html\n      }\n      Image {\n        url {\n          default\n        }\n      }\n    }\n    ... on BlogPage {\n      Heading\n      Description {\n        html\n      }\n    }\n    ... on ArticlePage {\n      Heading\n      MainBody {\n        html\n      }\n      MetaDescription\n      Image {\n        url {\n          default\n        }\n      }\n    }\n    ... on StandardPage {\n      MainBody {\n        html\n      }\n    }\n    ... on StartPage {\n      Heading\n      CompanyName\n      Body {\n        html\n      }\n      BannerImages {\n        _metadata {\n          url {\n            default\n          }\n        }\n      }\n    }\n  }\n": types.ContentItemFieldsFragmentDoc,
+    "\n      query getContentPage($url: String!) {\n        _Content(locale: en, where: { _metadata: { url: { default: { eq: $url } } } }) {\n          items {\n            ...ContentItemFields\n          }\n        }\n      }\n      \n    ": types.GetContentPageDocument,
+    "\n      query getEditContent($version: String!) {\n        _Content(locale: en, where: { _metadata: { version: { eq: $version } } }) {\n          items {\n            ...ContentItemFields\n          }\n        }\n      }\n      \n    ": types.GetEditContentDocument,
+};
+
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ *
+ *
+ * @example
+ * ```ts
+ * const query = gql(`query GetUser($id: ID!) { user(id: $id) { name } }`);
+ * ```
+ *
+ * The query argument is unknown!
+ * Please regenerate the types.
+ */
+export function gql(source: string): unknown;
+
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n    query ArticlePages {\n      ArticlePage(locale: en, orderBy: { _metadata: { published: DESC } }) {\n        items {\n          Heading\n          Image {\n            url {\n              default\n            }\n          }\n          MetaDescription\n          _metadata {\n            displayName\n            published\n            url {\n              default\n            }\n            types\n          }\n        }\n      }\n    }\n    "): (typeof documents)["\n    query ArticlePages {\n      ArticlePage(locale: en, orderBy: { _metadata: { published: DESC } }) {\n        items {\n          Heading\n          Image {\n            url {\n              default\n            }\n          }\n          MetaDescription\n          _metadata {\n            displayName\n            published\n            url {\n              default\n            }\n            types\n          }\n        }\n      }\n    }\n    "];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n    query getStartPage {\n      StartPage(locale: ALL) {\n        items {\n          Heading\n          CompanyName\n          Body {\n            html\n          }\n          BannerImages {\n            _metadata {\n              url {\n                default\n              }\n            }\n          }\n          Logo {\n            url {\n              default\n            }\n          }\n          _metadata {\n            displayName\n            url {\n              hierarchical\n              default\n            }\n            published\n            __typename\n          }\n          _link {\n            _Page {\n              items {\n                _metadata {\n                  displayName\n                  published\n                  url {\n                    default\n                  }\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n    "): (typeof documents)["\n    query getStartPage {\n      StartPage(locale: ALL) {\n        items {\n          Heading\n          CompanyName\n          Body {\n            html\n          }\n          BannerImages {\n            _metadata {\n              url {\n                default\n              }\n            }\n          }\n          Logo {\n            url {\n              default\n            }\n          }\n          _metadata {\n            displayName\n            url {\n              hierarchical\n              default\n            }\n            published\n            __typename\n          }\n          _link {\n            _Page {\n              items {\n                _metadata {\n                  displayName\n                  published\n                  url {\n                    default\n                  }\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n    "];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  fragment ContentItemFields on _IContent { \n    _metadata {\n      displayName\n      published\n      types\n      __typename\n      url {\n        default\n      }\n    }\n    ... on ImageRightContentPage {\n      MainBody {\n        html\n      }\n      Image {\n        url {\n          default\n        }\n      }\n    }\n    ... on BlogPage {\n      Heading\n      Description {\n        html\n      }\n    }\n    ... on ArticlePage {\n      Heading\n      MainBody {\n        html\n      }\n      MetaDescription\n      Image {\n        url {\n          default\n        }\n      }\n    }\n    ... on StandardPage {\n      MainBody {\n        html\n      }\n    }\n    ... on StartPage {\n      Heading\n      CompanyName\n      Body {\n        html\n      }\n      BannerImages {\n        _metadata {\n          url {\n            default\n          }\n        }\n      }\n    }\n  }\n"): (typeof documents)["\n  fragment ContentItemFields on _IContent { \n    _metadata {\n      displayName\n      published\n      types\n      __typename\n      url {\n        default\n      }\n    }\n    ... on ImageRightContentPage {\n      MainBody {\n        html\n      }\n      Image {\n        url {\n          default\n        }\n      }\n    }\n    ... on BlogPage {\n      Heading\n      Description {\n        html\n      }\n    }\n    ... on ArticlePage {\n      Heading\n      MainBody {\n        html\n      }\n      MetaDescription\n      Image {\n        url {\n          default\n        }\n      }\n    }\n    ... on StandardPage {\n      MainBody {\n        html\n      }\n    }\n    ... on StartPage {\n      Heading\n      CompanyName\n      Body {\n        html\n      }\n      BannerImages {\n        _metadata {\n          url {\n            default\n          }\n        }\n      }\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n      query getContentPage($url: String!) {\n        _Content(locale: en, where: { _metadata: { url: { default: { eq: $url } } } }) {\n          items {\n            ...ContentItemFields\n          }\n        }\n      }\n      \n    "): (typeof documents)["\n      query getContentPage($url: String!) {\n        _Content(locale: en, where: { _metadata: { url: { default: { eq: $url } } } }) {\n          items {\n            ...ContentItemFields\n          }\n        }\n      }\n      \n    "];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n      query getEditContent($version: String!) {\n        _Content(locale: en, where: { _metadata: { version: { eq: $version } } }) {\n          items {\n            ...ContentItemFields\n          }\n        }\n      }\n      \n    "): (typeof documents)["\n      query getEditContent($version: String!) {\n        _Content(locale: en, where: { _metadata: { version: { eq: $version } } }) {\n          items {\n            ...ContentItemFields\n          }\n        }\n      }\n      \n    "];
+
+export function gql(source: string) {
+  return (documents as any)[source] ?? {};
+}
+
+export type DocumentType<TDocumentNode extends DocumentNode<any, any>> = TDocumentNode extends DocumentNode<  infer TType,  any>  ? TType  : never;

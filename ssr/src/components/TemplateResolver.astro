@@ -1,0 +1,34 @@
+---
+// Import generated GraphQL types
+import type {
+  ContentItemFieldsFragment,
+  ArticlePage as ArticlePageType,
+  // GetStartPageQuery is no longer needed here
+} from '../gql/graphql';
+
+// Import page types i.e CMS models
+import StartPage from '../layouts/StartPage.astro';
+import StandardPage from '../layouts/StandardPage.astro';
+import ImageRightContentPage from '../layouts/ImageRightContentPage.astro';
+import BlogPage from '../layouts/BlogPage.astro';
+import ArticlePageLayout from '../layouts/ArticlePage.astro'; // Renamed to avoid conflict with type
+
+interface Props {
+  pageContent: ContentItemFieldsFragment;
+  articles?: ArticlePageType[]; // Assuming articles is an array of ArticlePage
+  // startPageContent and navItems are removed as they are handled by [...slug].astro
+}
+
+const { pageContent, articles } = Astro.props;
+//console.log(pageContent);
+---
+
+{pageContent.__typename === 'StartPage' && <StartPage pageContent={pageContent} articles={articles} />}
+
+{pageContent.__typename === 'StandardPage' && <StandardPage pageContent={pageContent} />}
+
+{pageContent.__typename === 'ImageRightContentPage' && <ImageRightContentPage pageContent={pageContent} />}
+
+{pageContent.__typename === 'BlogPage' && <BlogPage pageContent={pageContent} articles={articles} />}
+
+{pageContent.__typename === 'ArticlePage' && <ArticlePageLayout pageContent={pageContent} />}

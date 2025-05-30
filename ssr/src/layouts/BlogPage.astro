@@ -1,0 +1,59 @@
+---
+import type { BlogPage as BlogPageType, ArticlePage as ArticlePageType } from '../gql/graphql';
+// import Layout from "./Layout.astro"; // REMOVED
+import Card from '../components/Card.astro';
+
+interface Props {
+  pageContent: BlogPageType;
+  articles?: ArticlePageType[];
+  // startPageContent and navItems are not expected or used here
+}
+
+const { pageContent, articles } = Astro.props;
+
+// const title = pageContent.Heading ?? 'Blog'; // Unused
+// let description = 'Read our latest articles.'; // Unused
+// if (pageContent.Description?.html) { // Use .html for RichText
+//   description = pageContent.Description.html.substring(0, 160); // Simplified, ideally use htmlToPlaintext utility
+// } else if (pageContent.Heading) {
+//   description = `Articles related to ${pageContent.Heading}`;
+// }
+
+const hasArticles = articles && articles.length > 0;
+---
+
+<Fragment>
+  <div class='container mx-auto px-4 py-8'>
+    <header class='mb-10 md:mb-12 text-center'>
+      <h1 class='text-4xl md:text-5xl font-bold text-gray-900 dark:text-white'>{pageContent.Heading}</h1>
+      {
+        pageContent.Description?.html && (
+          <div class='mt-4 prose prose-lg mx-auto text-gray-600 dark:text-gray-400 max-w-2xl' set:html={pageContent.Description.html} />
+        )
+      }
+    </header>
+
+    {
+      hasArticles ? (
+        <div class='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8'>
+          {articles!.map(
+            (article) =>
+              article && (
+                <Card
+                  title={article.Heading!}
+                  href={article._metadata?.url?.default ?? '#'}
+                  imageUrl={article.Image?.url?.default}
+                  imageAlt={article.Heading ?? undefined}
+                  date={article._metadata?.published}
+                  excerpt={article.MetaDescription}
+                  tags={article.tags}
+                />
+              ),
+          )}
+        </div>
+      ) : (
+        <p class='text-center text-lg text-gray-500 dark:text-gray-400 py-12'>There are no articles at the moment. Check back soon!</p>
+      )
+    }
+  </div>
+</Fragment>

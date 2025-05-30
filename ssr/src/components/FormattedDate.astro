@@ -1,0 +1,40 @@
+---
+export interface Props {
+  dateString: string | Date | null | undefined;
+  locale?: string;
+  options?: Intl.DateTimeFormatOptions;
+}
+
+const {
+  dateString,
+  locale = 'en-US',
+  options = {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  },
+} = Astro.props;
+
+let formattedDate = '';
+let isoDate = '';
+
+if (dateString) {
+  const dateToFormat = typeof dateString === 'string' ? new Date(dateString) : dateString;
+  if (!isNaN(dateToFormat.getTime())) {
+    formattedDate = dateToFormat.toLocaleDateString(locale, options);
+    isoDate = dateToFormat.toISOString();
+  } else {
+    console.warn(`[FormattedDate] Invalid date string provided: ${dateString}`);
+  }
+} else {
+  // console.warn("[FormattedDate] No dateString provided.");
+}
+---
+
+{
+  dateString && formattedDate ? (
+    <time datetime={isoDate}>{formattedDate}</time>
+  ) : (
+    <Fragment set:html={'<!-- Invalid or no date provided to FormattedDate -->'} />
+  )
+}

@@ -1,0 +1,30 @@
+---
+import type { StandardPage } from '../gql/graphql';
+// import Layout from "./Layout.astro"; // REMOVED
+
+interface Props {
+  pageContent: StandardPage;
+  // startPageContent and navItems removed
+}
+
+const { pageContent } = Astro.props;
+
+// const title = pageContent._metadata?.displayName ?? 'Page'; // Unused
+// const description = pageContent.MainBody?.html ? // Unused
+//                     pageContent.MainBody.html.substring(0, 160) :
+//                     `Information about ${title}`;
+---
+
+<Fragment>
+  <article class='prose lg:prose-xl dark:prose-invert max-w-3xl mx-auto px-4 py-12'>
+    <h1 class='text-3xl md:text-4xl font-bold mb-8 text-center'>{pageContent._metadata?.displayName}</h1>
+    {pageContent.MainBody?.html && <div set:html={pageContent.MainBody.html} />}
+    {!pageContent.MainBody?.html && <p class='text-center text-gray-500 dark:text-gray-400'>This page currently has no content.</p>}
+  </article>
+</Fragment>
+
+<!-- 
+  Potential data points from StandardPage type:
+  pageContent.MainBody (RichText -> html, plaintext)
+  pageContent._metadata (IContentMetadata -> displayName)
+-->
