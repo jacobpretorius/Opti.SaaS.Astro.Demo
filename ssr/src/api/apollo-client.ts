@@ -2,6 +2,27 @@ import pkg from '@apollo/client';
 const { ApolloClient, InMemoryCache, gql, createHttpLink } = pkg;
 import { setContext } from '@apollo/client/link/context';
 
+// Simple cache with 2-minute TTL
+const queryCache = new Map();
+const CACHE_TTL = 2 * 60 * 1000; // 2 minutes
+
+function getCacheKey(query: string, variables: any) {
+  return `${query}:${JSON.stringify(variables)}`;
+}
+
+function getCachedResult(key: string) {
+  const cached = queryCache.get(key);
+  if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+    return cached.data;
+  }
+  queryCache.delete(key);
+  return null;
+}
+
+function setCachedResult(key: string, data: any) {
+  queryCache.set(key, { data, timestamp: Date.now() });
+}
+
 // Create function to get Apollo Client with optional preview token
 export function getClient(previewToken?: string) {
   const httpLink = createHttpLink({
@@ -21,6 +42,11 @@ export function getClient(previewToken?: string) {
   return new ApolloClient({
     link: authLink.concat(httpLink),
     cache: new InMemoryCache(),
+    defaultOptions: {
+      query: {
+        fetchPolicy: 'no-cache', // Use our custom cache instead
+      },
+    },
   });
 }
 
@@ -59,7 +85,65 @@ export async function getArticles(previewToken?: string) {
 }
 
 export async function getStartPage(previewToken?: string){
-  const client = previewToken ? getClient(previewToken) : defaultClient;
+  // Skip cache for preview mode
+  if (previewToken) {
+    const client = getClient(previewToken);
+    const results = await client.query({
+      query: gql`
+      query getStartPage {
+        StartPage(locale: ALL) {
+          items {
+            Heading
+            CompanyName
+            Body {
+              html
+            }
+            BannerImages { 
+              _metadata {
+                url { default } 
+              }
+            }
+            Logo {
+              url { default }
+            }
+            _metadata {
+              displayName
+              url {
+                hierarchical
+                default
+              }
+              published
+              __typename
+            }
+            _link {
+              _Page {
+                items {
+                  _metadata {
+                    displayName
+                    published
+                    url {
+                      default
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      `
+    });
+    return results.data.StartPage.items[0];
+  }
+
+  // Use cache for regular requests
+  const cacheKey = getCacheKey('getStartPage', {});
+  const cached = getCachedResult(cacheKey);
+  if (cached) {
+    return cached;
+  }
+
+  const client = defaultClient;
   const results = await client.query({
     query: gql`
     query getStartPage {
@@ -104,9 +188,11 @@ export async function getStartPage(previewToken?: string){
       }
     }
     `
-  })
+  });
 
-  return results.data.StartPage.items[0];
+  const result = results.data.StartPage.items[0];
+  setCachedResult(cacheKey, result);
+  return result;
 }
 
 // This fragment is intended to be used on items within the _Content.items list.
