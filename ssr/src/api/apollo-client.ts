@@ -341,11 +341,108 @@ export async function resolveEditContent(version: string, previewToken: string){
       query getEditContent($version: String!) {
         _Content(locale: en, where: { _metadata: { version: { eq: $version } } }) {
           items {
-            ...ContentItemFields
+            _metadata {
+              displayName
+              published
+              types
+              __typename
+              url {
+                default
+              }
+            }
+            ... on ImageRightContentPage {
+              MainBody {
+                html
+              }
+              Image {
+                url {
+                  default
+                }
+              }
+            }
+            ... on BlogPage {
+              Heading
+              Description {
+                html
+              }
+            }
+            ... on ArticlePage {
+              Heading
+              MainBody {
+                html
+              }
+              MetaDescription
+              Image {
+                url {
+                  default
+                }
+              }
+            }
+            ... on StandardPage {
+              MainBody {
+                html
+              }
+            }
+            ... on StartPage {
+              Heading
+              CompanyName
+              Body {
+                html
+              }
+              BannerImages {
+                _metadata {
+                  url {
+                    default
+                  }
+                }
+              }
+            }
+            ... on BlankExperience {
+              composition {
+                nodeType
+                key
+                nodes {
+                  nodeType
+                  key
+                  ... on CompositionComponentNode {
+                    component {
+                      _metadata {
+                        types
+                      }
+                      ... on Experience_Carousel {
+                        Carousel_Images {
+                          _metadata {
+                            url {
+                              default
+                            }
+                            displayName
+                          }
+                        }
+                      }
+                      ... on Experience_Hero {
+                        Heading {
+                          html
+                        }
+                        Description {
+                          html
+                        }
+                        Image {
+                          default
+                        }
+                      }
+                      ... on Experience_RTE {
+                        Text {
+                          html
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
-      ${ContentItemFields}
     `,
     variables: {
       version,
