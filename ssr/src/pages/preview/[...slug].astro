@@ -21,7 +21,28 @@ if (!previewToken || !version) {
 // Fetch content with preview token
 const startPageContent = await getStartPage(previewToken);
 const articles = await getArticles(previewToken);
-const navItems = startPageContent._link._Page.items;
+const allNavItems = startPageContent._link._Page.items;
+
+// Debug navigation items
+console.log('All nav items:', allNavItems.length);
+console.log('Nav items details:', allNavItems.map(item => ({
+  displayName: item._metadata.displayName,
+  url: item._metadata.url?.default,
+  published: item._metadata.published,
+  types: item._metadata.types
+})));
+
+const navItems = allNavItems.filter((item, index, arr) => 
+  item._metadata.published && 
+  arr.findIndex(i => i._metadata.displayName === item._metadata.displayName) === index
+);
+
+console.log('Filtered nav items:', navItems.length);
+console.log('Filtered nav details:', navItems.map(item => ({
+  displayName: item._metadata.displayName,
+  url: item._metadata.url?.default
+})));
+
 const pageContent = await resolveEditContent(version, previewToken);
 
 // Get CMS instance ID from environment
