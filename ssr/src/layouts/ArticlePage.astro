@@ -1,0 +1,85 @@
+---
+import { Image } from 'astro:assets';
+import type { ArticlePage } from '../gql/graphql';
+import FormattedDate from '../components/FormattedDate.astro';
+
+interface Props {
+  pageContent: ArticlePage;
+}
+
+const { pageContent } = Astro.props;
+const publishedDate = pageContent._metadata?.published;
+---
+
+<article>
+  <div class='hero-image'>
+    {
+      pageContent.Image?.url?.default && (
+        <Image
+          width={1020}
+          height={510}
+          src={pageContent.Image.url.default}
+          alt={pageContent.Heading ?? 'Article image'}
+        />
+      )
+    }
+  </div>
+  <div class='prose'>
+    <div class='title'>
+      <div class='date'>
+        {publishedDate && <FormattedDate dateString={publishedDate} />}
+      </div>
+      <h1>{pageContent.Heading}</h1>
+      <hr />
+    </div>
+    {
+      pageContent.MainBody?.html && (
+        <div set:html={pageContent.MainBody.html} />
+      )
+    }
+  </div>
+
+  <style>
+    main {
+      width: calc(100% - 2em);
+      max-width: 100%;
+      margin: 0;
+    }
+    .hero-image {
+      width: 100%;
+      margin-bottom: 2em;
+    }
+    .hero-image img {
+      display: block;
+      margin: 0 auto;
+      border-radius: 12px;
+      box-shadow: var(--box-shadow);
+      width: 100%;
+      max-width: 1020px;
+      height: auto;
+    }
+    .prose {
+      width: 720px;
+      max-width: calc(100% - 2em);
+      margin: auto;
+      padding: 1em;
+      color: rgb(var(--gray-dark));
+    }
+    .title {
+      margin-bottom: 1em;
+      padding: 1em 0;
+      text-align: center;
+      line-height: 1;
+    }
+    .title h1 {
+      margin: 0 0 0.5em 0;
+    }
+    .date {
+      margin-bottom: 0.5em;
+      color: rgb(var(--gray));
+    }
+    .last-updated-on {
+      font-style: italic;
+    }
+  </style>
+</article>

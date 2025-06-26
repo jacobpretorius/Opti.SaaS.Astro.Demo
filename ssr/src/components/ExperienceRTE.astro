@@ -1,0 +1,72 @@
+---
+import type { Experience_Rte } from '../gql/graphql';
+
+interface Props {
+  component: Experience_Rte;
+}
+
+const { component } = Astro.props;
+---
+
+<section class="experience-rte">
+  {component.Text?.html && (
+    <div class="rte-content" set:html={component.Text.html} />
+  )}
+</section>
+
+<style>
+  .experience-rte {
+    margin: 2rem 0;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 1rem;
+  }
+  
+  .rte-content {
+    color: rgb(var(--black));
+    line-height: 1.6;
+  }
+  
+  .rte-content h1,
+  .rte-content h2,
+  .rte-content h3,
+  .rte-content h4,
+  .rte-content h5,
+  .rte-content h6 {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    color: rgb(var(--black));
+  }
+  
+  .rte-content p {
+    margin-bottom: 1em;
+  }
+  
+  .rte-content ul,
+  .rte-content ol {
+    margin-bottom: 1em;
+    padding-left: 2rem;
+  }
+  
+  .rte-content li {
+    margin-bottom: 0.5em;
+  }
+  
+  .rte-content blockquote {
+    border-left: 4px solid rgb(var(--accent));
+    padding-left: 1rem;
+    margin: 1.5rem 0;
+    color: rgb(var(--gray-dark));
+    font-style: italic;
+  }
+  
+  .rte-content a {
+    color: rgb(var(--accent));
+    text-decoration: underline;
+  }
+  
+  .rte-content a:hover {
+    text-decoration: none;
+  }
+</style>

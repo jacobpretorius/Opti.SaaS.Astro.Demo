@@ -1,0 +1,85 @@
+---
+import type { StartPage, ArticlePage as ArticlePageType } from '../gql/graphql';
+import { Image } from 'astro:assets';
+import { ClientRouter } from 'astro:transitions';
+
+interface Props {
+  pageContent: StartPage;
+  articles?: ArticlePageType[];
+}
+
+const { pageContent, articles } = Astro.props;
+---
+
+<ClientRouter />
+
+<h1 data-epi-edit='Heading'>🧑‍🚀 {pageContent.Heading}</h1>
+
+{pageContent.Body?.html && <div data-epi-edit='Body' set:html={pageContent.Body.html} />}
+
+{
+  pageContent.BannerImages && pageContent.BannerImages.length > 0 && (
+    <div class='hero-container' data-epi-edit='BannerImages'>
+      {pageContent.BannerImages.map((item) => {
+        const imageUrl = item?._metadata?.url?.default;
+        return imageUrl ? <Image src={imageUrl} alt='' inferSize={true} /> : null;
+      })}
+    </div>
+  )
+}
+
+{
+  articles && articles.length > 0 && (
+    <div class='articles'>
+      <h2>Recent writing</h2>
+      <ul>
+        {articles.map(
+          (article) =>
+            article &&
+            article.Heading &&
+            article._metadata?.url?.default && (
+              <li>
+                <a href={article._metadata.url.default}>
+                  <h5 class='title'>{article.Heading}</h5>
+                </a>
+              </li>
+            ),
+        )}
+      </ul>
+    </div>
+  )
+}
+
+<style>
+  .hero-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    overflow: hidden;
+  }
+  .hero-container img {
+    border-radius: 10px;
+    width: calc((100% - (4 * 1em)) / 4);
+    margin: 1em;
+    flex: 1;
+    object-fit: cover;
+  }
+
+  .articles {
+    margin-top: 1em;
+  }
+  .articles ul {
+    gap: 2rem;
+    list-style-type: decimal-leading-zero;
+    margin: 0;
+    padding: 0;
+  }
+  .articles ul li * {
+    text-decoration: none;
+    transition: 0.2s ease;
+  }
+  .articles ul li a {
+    display: block;
+  }
+</style>

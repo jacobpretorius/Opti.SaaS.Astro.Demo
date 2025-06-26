@@ -1,0 +1,31 @@
+---
+import type {
+  ContentItemFieldsFragment,
+  ArticlePage as ArticlePageType,
+} from '../gql/graphql';
+import StartPage from '../layouts/StartPage.astro';
+import StandardPage from '../layouts/StandardPage.astro';
+import ImageRightContentPage from '../layouts/ImageRightContentPage.astro';
+import BlogPage from '../layouts/BlogPage.astro';
+import ArticlePageLayout from '../layouts/ArticlePage.astro';
+import BlankExperience from '../layouts/BlankExperience.astro';
+
+interface Props {
+  pageContent: ContentItemFieldsFragment;
+  articles?: ArticlePageType[];
+}
+
+const { pageContent, articles } = Astro.props;
+---
+
+{pageContent.__typename === 'StartPage' && <StartPage pageContent={pageContent} articles={articles} />}
+
+{pageContent.__typename === 'StandardPage' && <StandardPage pageContent={pageContent} />}
+
+{pageContent.__typename === 'ImageRightContentPage' && <ImageRightContentPage pageContent={pageContent} />}
+
+{pageContent.__typename === 'BlogPage' && <BlogPage pageContent={pageContent} articles={articles} />}
+
+{pageContent.__typename === 'ArticlePage' && <ArticlePageLayout pageContent={pageContent} />}
+
+{pageContent.__typename === 'BlankExperience' && <BlankExperience pageContent={pageContent} />}

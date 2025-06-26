@@ -1,0 +1,59 @@
+---
+export const prerender = false;
+
+import BaseHead from '../../components/BaseHead.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { getArticles, getStartPage, resolveEditContent } from '../../api/apollo-client';
+import TemplateResolver from '../../components/TemplateResolver.astro';
+
+// Get preview parameters from URL
+const previewToken = Astro.url.searchParams.get('preview_token');
+const version = Astro.url.searchParams.get('ver');
+const locale = Astro.url.searchParams.get('loc') || undefined;
+const context = Astro.url.searchParams.get('ctx') || undefined;
+
+
+// Redirect to non-preview route if no preview token or version
+if (!previewToken || !version) {
+  return Astro.redirect(`/${Astro.params.slug || ''}`);
+}
+
+// Fetch content with preview token
+const startPageContent = await getStartPage(previewToken);
+const articles = await getArticles(previewToken);
+const navItems = startPageContent._link._Page.items;
+const pageContent = await resolveEditContent(version, previewToken);
+
+// Get CMS instance ID from environment
+const cmsInstanceId = import.meta.env.PUBLIC_APP_SAAS_UUID;
+---
+
+<!doctype html>
+<html lang='en'>
+  <head>
+    <BaseHead title={startPageContent.Heading} description={startPageContent.Heading} />
+    <!-- CMS Preview Communication Script -->
+    <script is:inline src={`https://app-${cmsInstanceId}.cms.optimizely.com/util/javascript/communicationinjector.js`}></script>
+
+    <!-- Content Change Listener -->
+    <script is:inline>
+      window.addEventListener('optimizely:cms:contentSaved', async (event) => {
+        const message = event.detail;
+
+        // Extract new preview token from preview URL
+        const newPreviewUrl = message.previewUrl;
+        const urlParams = new URLSearchParams(new URL(newPreviewUrl).search);
+
+        window.location.href = newPreviewUrl;
+      });
+    </script>
+  </head>
+  <body>
+    <Header title={startPageContent.CompanyName} navItems={navItems} />
+    <main>
+      <TemplateResolver pageContent={pageContent} articles={articles} />
+    </main>
+    <Footer />
+  </body>
+</html>

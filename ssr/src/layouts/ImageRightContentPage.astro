@@ -1,0 +1,50 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageRightContentPage } from '../gql/graphql';
+
+interface Props {
+  pageContent: ImageRightContentPage;
+}
+
+const { pageContent } = Astro.props;
+---
+
+<div class='container'>
+  <div>
+    <h1>{pageContent._metadata?.displayName}</h1>
+    {
+      pageContent.MainBody?.html && (
+        <div set:html={pageContent.MainBody.html} />
+      )
+    }
+  </div>
+  {
+    pageContent.Image?.url?.default && (
+      <div>
+        <Image
+          src={pageContent.Image.url.default}
+          alt={pageContent._metadata?.displayName ?? 'Content image'}
+          inferSize={true}
+        />
+      </div>
+    )
+  }
+</div>
+
+<style>
+  .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    overflow: hidden;
+  }
+  .container img {
+    border-radius: 10px;
+    margin: 1em;
+    flex: 1;
+    object-fit: cover;
+    box-shadow: var(--box-shadow);
+  }
+</style>
+
