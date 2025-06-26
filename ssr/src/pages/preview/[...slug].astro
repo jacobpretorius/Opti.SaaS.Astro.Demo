@@ -13,7 +13,6 @@ const version = Astro.url.searchParams.get('ver');
 const locale = Astro.url.searchParams.get('loc') || undefined;
 const context = Astro.url.searchParams.get('ctx') || undefined;
 
-console.log('Preview mode: ', Astro.url.href);
 
 // Redirect to non-preview route if no preview token or version
 if (!previewToken || !version) {
@@ -37,23 +36,14 @@ const cmsInstanceId = import.meta.env.PUBLIC_APP_SAAS_UUID;
     <!-- CMS Preview Communication Script -->
     <script is:inline src={`https://app-${cmsInstanceId}.cms.optimizely.com/util/javascript/communicationinjector.js`}></script>
 
-    <!-- Make resolveEditContent available to client-side -->
-    <script is:inline define:vars={{ resolveEditContent }}>
-      // Expose resolveEditContent to window for client-side access
-      window.resolveEditContent = resolveEditContent;
-    </script>
-
     <!-- Content Change Listener -->
     <script is:inline>
       window.addEventListener('optimizely:cms:contentSaved', async (event) => {
         const message = event.detail;
-        console.log('Content saved:', message);
 
         // Extract new preview token from preview URL
         const newPreviewUrl = message.previewUrl;
         const urlParams = new URLSearchParams(new URL(newPreviewUrl).search);
-        //const newVersionToken = urlParams.get('ver');
-        //const newPreviewToken = urlParams.get('preview_token');
 
         window.location.href = newPreviewUrl;
       });

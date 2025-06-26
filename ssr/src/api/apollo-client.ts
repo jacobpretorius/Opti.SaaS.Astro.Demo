@@ -26,8 +26,6 @@ export function getClient(previewToken?: string) {
 
 const defaultClient = getClient();
 
-// Define ImageFragment
-// const IMAGE_FRAGMENT = gql` ... `;
 
 export async function getArticles(previewToken?: string) {
   const client = previewToken ? getClient(previewToken) : defaultClient;
@@ -73,16 +71,14 @@ export async function getStartPage(previewToken?: string){
             html
           }
           BannerImages { 
-            _metadata { # Match static site query
+            _metadata {
               url { default } 
-              # displayName was an SSR addition, static site doesn't have it here
             }
           }
-          Logo { # Match static site query
+          Logo {
             url { default }
-            # key was an SSR addition, static site doesn't have it here
           }
-          _metadata { # This is metadata of StartPage itself
+          _metadata {
             displayName
             url {
               hierarchical
@@ -183,18 +179,73 @@ export async function resolveContent(url: string, previewToken?: string){
       query getContentPage($url: String!) {
         _Content(locale: en, where: { _metadata: { url: { default: { eq: $url } } } }) {
           items {
-            ...ContentItemFields
+            _metadata {
+              displayName
+              published
+              types
+              __typename
+              url {
+                default
+              }
+            }
+            ... on ImageRightContentPage {
+              MainBody {
+                html
+              }
+              Image {
+                url {
+                  default
+                }
+              }
+            }
+            ... on BlogPage {
+              Heading
+              Description {
+                html
+              }
+            }
+            ... on ArticlePage {
+              Heading
+              MainBody {
+                html
+              }
+              MetaDescription
+              Image {
+                url {
+                  default
+                }
+              }
+            }
+            ... on StandardPage {
+              MainBody {
+                html
+              }
+            }
+            ... on StartPage {
+              Heading
+              CompanyName
+              Body {
+                html
+              }
+              BannerImages {
+                _metadata {
+                  url {
+                    default
+                  }
+                }
+              }
+            }
           }
         }
       }
-      ${ContentItemFields}
     `,
     variables: {
       url,
     },
   });
 
-  return results.data._Content.items[0] ?? null;
+  const item = results.data._Content.items[0] ?? null;
+  return item;
 }
 
 export async function resolveEditContent(version: string, previewToken: string){

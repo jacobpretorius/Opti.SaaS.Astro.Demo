@@ -1,72 +1,85 @@
 ---
-import type { ArticlePage } from '../gql/graphql'; // Use generated ArticlePage type
-// import Layout from "./Layout.astro"; // REMOVED
+import { Image } from 'astro:assets';
+import type { ArticlePage } from '../gql/graphql';
 import FormattedDate from '../components/FormattedDate.astro';
 
 interface Props {
   pageContent: ArticlePage;
-  // startPageContent and navItems are not expected or used here
 }
 
 const { pageContent } = Astro.props;
-
-// const title = pageContent.Heading ?? 'Article'; // Unused
-// const description = pageContent.MetaDescription ?? 'An article from the site'; // Unused
-// const mainImage = pageContent.Image?.url?.default ?? '/placeholder-image.jpg'; // Unused
 const publishedDate = pageContent._metadata?.published;
 ---
 
-<Fragment>
-  <div class='container mx-auto px-4 py-8'>
-    <article class='prose lg:prose-xl max-w-none'>
-      <header class='mb-8'>
-        <h1 class='text-4xl font-bold text-gray-800 dark:text-white'>{pageContent.Heading}</h1>
-        {
-          publishedDate && (
-            <div class='text-gray-600 dark:text-gray-400 text-sm mt-2'>
-              Published: <FormattedDate dateString={publishedDate} />
-            </div>
-          )
-        }
-        {
-          pageContent.Image?.url?.default && (
-            <img
-              src={pageContent.Image.url.default}
-              alt={pageContent.Heading ?? 'Article image'}
-              class='w-full h-auto object-cover rounded-lg mt-4 shadow-lg'
-              style='max-height: 400px;'
-            />
-          )
-        }
-      </header>
-
-      {
-        pageContent.MainBody?.html && (
-          <div
-            class='prose-p:text-gray-700 dark:prose-p:text-gray-300 prose-headings:text-gray-800 dark:prose-headings:text-white'
-            set:html={pageContent.MainBody.html}
-          />
-        )
-      }
-
-      <footer class='mt-12 pt-8 border-t border-gray-200 dark:border-gray-700'>
-        <a href='/blog' class='text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300'> &larr; Back to Blog </a>
-      </footer>
-    </article>
+<article>
+  <div class='hero-image'>
+    {
+      pageContent.Image?.url?.default && (
+        <Image
+          width={1020}
+          height={510}
+          src={pageContent.Image.url.default}
+          alt={pageContent.Heading ?? 'Article image'}
+        />
+      )
+    }
   </div>
-</Fragment>
+  <div class='prose'>
+    <div class='title'>
+      <div class='date'>
+        {publishedDate && <FormattedDate dateString={publishedDate} />}
+      </div>
+      <h1>{pageContent.Heading}</h1>
+      <hr />
+    </div>
+    {
+      pageContent.MainBody?.html && (
+        <div set:html={pageContent.MainBody.html} />
+      )
+    }
+  </div>
 
-<style>
-  /* Scoped styles can be added here if needed */
-  header img {
-    aspect-ratio: 16 / 9; /* Or your preferred aspect ratio */
-  }
-</style>
-<!-- 
-  Potential data points from ArticlePage type:
-  pageContent.Heading (String)
-  pageContent.Image (ContentReference -> url.default (String))
-  pageContent.MainBody (RichText -> html (String))
-  pageContent.MetaDescription (String)
-  pageContent._metadata (IContentMetadata -> .displayName, .published, .url.default, .types)
--->
+  <style>
+    main {
+      width: calc(100% - 2em);
+      max-width: 100%;
+      margin: 0;
+    }
+    .hero-image {
+      width: 100%;
+      margin-bottom: 2em;
+    }
+    .hero-image img {
+      display: block;
+      margin: 0 auto;
+      border-radius: 12px;
+      box-shadow: var(--box-shadow);
+      width: 100%;
+      max-width: 1020px;
+      height: auto;
+    }
+    .prose {
+      width: 720px;
+      max-width: calc(100% - 2em);
+      margin: auto;
+      padding: 1em;
+      color: rgb(var(--gray-dark));
+    }
+    .title {
+      margin-bottom: 1em;
+      padding: 1em 0;
+      text-align: center;
+      line-height: 1;
+    }
+    .title h1 {
+      margin: 0 0 0.5em 0;
+    }
+    .date {
+      margin-bottom: 0.5em;
+      color: rgb(var(--gray));
+    }
+    .last-updated-on {
+      font-style: italic;
+    }
+  </style>
+</article>

@@ -1,18 +1,12 @@
 ---
 import type { StandardPage } from '../gql/graphql';
-// import Layout from "./Layout.astro"; // REMOVED
 
 interface Props {
   pageContent: StandardPage;
-  // startPageContent and navItems removed
 }
 
 const { pageContent } = Astro.props;
 
-// const title = pageContent._metadata?.displayName ?? 'Page'; // Unused
-// const description = pageContent.MainBody?.html ? // Unused
-//                     pageContent.MainBody.html.substring(0, 160) :
-//                     `Information about ${title}`;
 ---
 
 <Fragment>
@@ -23,8 +17,3 @@ const { pageContent } = Astro.props;
   </article>
 </Fragment>
 
-<!-- 
-  Potential data points from StandardPage type:
-  pageContent.MainBody (RichText -> html, plaintext)
-  pageContent._metadata (IContentMetadata -> displayName)
--->

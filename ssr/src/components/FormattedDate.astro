@@ -24,10 +24,7 @@ if (dateString) {
     formattedDate = dateToFormat.toLocaleDateString(locale, options);
     isoDate = dateToFormat.toISOString();
   } else {
-    console.warn(`[FormattedDate] Invalid date string provided: ${dateString}`);
   }
-} else {
-  // console.warn("[FormattedDate] No dateString provided.");
 }
 ---
 

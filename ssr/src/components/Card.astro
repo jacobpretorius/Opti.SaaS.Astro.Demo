@@ -1,7 +1,5 @@
 ---
 import FormattedDate from './FormattedDate.astro';
-// If you plan to use Astro Assets for optimized local images in cards:
-// import { Image } from 'astro:assets';
 
 export interface Props {
   title: string;
@@ -17,7 +15,7 @@ const {
   title,
   href,
   imageUrl,
-  imageAlt = title, // Default alt to title if not provided
+  imageAlt = title,
   date,
   excerpt,
   tags,

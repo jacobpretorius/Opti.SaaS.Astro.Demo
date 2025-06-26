@@ -2,8 +2,6 @@
 import type { StartPage, ArticlePage as ArticlePageType } from '../gql/graphql';
 import { Image } from 'astro:assets';
 import { ClientRouter } from 'astro:transitions';
-// Card component is no longer used here directly for recent articles
-// import Card from '../components/Card.astro';
 
 interface Props {
   pageContent: StartPage;
@@ -11,7 +9,6 @@ interface Props {
 }
 
 const { pageContent, articles } = Astro.props;
-// logoUrl and recentArticles are no longer used directly here in the same way.
 ---
 
 <ClientRouter />
@@ -24,8 +21,8 @@ const { pageContent, articles } = Astro.props;
   pageContent.BannerImages && pageContent.BannerImages.length > 0 && (
     <div class='hero-container' data-epi-edit='BannerImages'>
       {pageContent.BannerImages.map((item) => {
-        const imageUrl = item?._metadata?.url?.default; // Ensure we handle potential nulls
-        return imageUrl ? <Image src={imageUrl} alt='' inferSize={true} /> : null; // Match static site <Image>
+        const imageUrl = item?._metadata?.url?.default;
+        return imageUrl ? <Image src={imageUrl} alt='' inferSize={true} /> : null;
       })}
     </div>
   )
@@ -34,9 +31,7 @@ const { pageContent, articles } = Astro.props;
 {
   articles && articles.length > 0 && (
     <div class='articles'>
-      {' '}
-      {/* Changed from section to div, class='articles' */}
-      <h2>Recent writing</h2> {/* Simplified h2 */}
+      <h2>Recent writing</h2>
       <ul>
         {articles.map(
           (article) =>
@@ -45,7 +40,7 @@ const { pageContent, articles } = Astro.props;
             article._metadata?.url?.default && (
               <li>
                 <a href={article._metadata.url.default}>
-                  <h5 class='title'>{article.Heading}</h5> {/* Match static site structure */}
+                  <h5 class='title'>{article.Heading}</h5>
                 </a>
               </li>
             ),
@@ -56,37 +51,27 @@ const { pageContent, articles } = Astro.props;
 }
 
 <style>
-  /* .logo styles will be removed */
-
   .hero-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%;
     overflow: hidden;
-    /* padding: 1em 0; will be removed */
   }
   .hero-container img {
-    /* Changed from img.hero-image */
     border-radius: 10px;
     width: calc((100% - (4 * 1em)) / 4);
     margin: 1em;
     flex: 1;
     object-fit: cover;
-    /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); will be removed */
   }
 
-  /* .articles-section and related styles will be removed or replaced by .articles */
-
-  /* ul.article-list and related styles will be removed */
-
-  /* Keep .articles for potential future use if structure changes, but not directly used now */
   .articles {
     margin-top: 1em;
   }
   .articles ul {
     gap: 2rem;
-    list-style-type: decimal-leading-zero; /* No longer default for article-list */
+    list-style-type: decimal-leading-zero;
     margin: 0;
     padding: 0;
   }

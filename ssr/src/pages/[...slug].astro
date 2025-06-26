@@ -26,13 +26,9 @@ function htmlToPlaintext(html: string | null | undefined, maxLength: number = 16
 
 // Get the current slug from Astro.params
 const { slug } = Astro.params;
-console.log('[...slug].astro: slug =', slug);
 
 // Fetch common data for header/footer - this runs for every page request
 const startPageItem = await getStartPage();
-console.log('[...slug].astro: startPageItem =', JSON.stringify(startPageItem, null, 2));
-// Assuming getStartPage returns an object like { StartPage: { items: [ ... ] } } or similar
-// Adjust based on actual return type. For now, assuming direct item if not list.
 const navItems = startPageItem?._link?._Page?.items ?? [];
 
 // Fetch main page content based on slug
@@ -41,19 +37,16 @@ const navItems = startPageItem?._link?._Page?.items ?? [];
 let pageContent: ContentItemFieldsFragment | null = null;
 if (slug === undefined) {
   if (startPageItem && startPageItem.__typename === 'StartPage') {
-    // We need to ensure startPageItem (StartPageType) is assignable to ContentItemFieldsFragment
-    // This usually works if StartPage is part of the fragment's union and fields match.
-    // If direct assignment is problematic, we might need to re-resolve it or ensure types are compatible.
-    // For now, let's assume it's compatible or handle specific assignment if TS complains.
-    pageContent = startPageItem as unknown as ContentItemFieldsFragment; // Cast if types are structurally compatible but not directly assignable
+    pageContent = startPageItem as unknown as ContentItemFieldsFragment;
   } else {
-    console.error("Failed to load StartPage content for homepage or it's not of __typename 'StartPage'.");
     return new Response('Error loading homepage data', { status: 500 });
   }
 } else {
-  // resolveContent returns GetContentPageQuery['_Content']['items'][0]
-  // which should be compatible with ContentItemFieldsFragment
-  const resolved = await resolveContent(slug);
+  // Try both with and without trailing slash to handle CMS URL variations
+  let resolved = await resolveContent(`/${slug}/`);
+  if (!resolved) {
+    resolved = await resolveContent(`/${slug}`);
+  }
   if (resolved) {
     pageContent = resolved;
   }
@@ -63,21 +56,13 @@ if (slug === undefined) {
 if (!pageContent && slug !== undefined) {
   return Astro.redirect('/404'); // Make sure you have a 404.astro page
 }
-// If it's the homepage (slug is undefined) and startPageItem failed, it's also an error state.
 if (!pageContent && slug === undefined) {
-  // Handle error - perhaps render a generic error page or throw an error
-  // For now, let's assume startPageItem will always load for the home route or redirect if not.
-  // If startPageItem itself is null for the homepage, this implies a critical data fetching issue.
-  console.error('Failed to load StartPage content for homepage.');
-  // You might want to return a 500 response here or redirect.
   return new Response('Error loading homepage data', { status: 500 });
 }
 
 // Fetch articles - only if the page type is StartPage or BlogPage
 const articles: ArticlePageType[] = pageContent?.__typename === 'StartPage' || pageContent?.__typename === 'BlogPage' ? await getArticles() : [];
 
-console.log('[...slug].astro: final pageContent for TemplateResolver =', JSON.stringify(pageContent, null, 2));
-console.log('[...slug].astro: final articles for TemplateResolver =', JSON.stringify(articles, null, 2));
 
 // Determine title and description for BaseHead
 let currentPageTitle = pageContent?._metadata?.displayName ?? startPageItem?.Heading ?? 'Opti Astro Demo';
@@ -115,12 +100,6 @@ const siteName = startPageItem?.CompanyName ?? 'Opti Astro Demo';
   <head>
     <BaseHead title={`${currentPageTitle} | ${siteName}`} description={currentPageDescription} image={mainImage ?? undefined} />
     <style is:global>
-      /* We will use the :root variables from global.css */
-      /* Dark mode variables removed */
-      /* :root {
-        --color-text-dark: #fff;
-        --color-bg-dark: #1a202c;
-      } */
 
       body {
         display: flex;
@@ -128,12 +107,10 @@ const siteName = startPageItem?.CompanyName ?? 'Opti Astro Demo';
         min-height: 100vh;
       }
 
-      /* .dark body rule removed */
 
       main {
         flex-grow: 1;
       }
-      /* Prose styling will come from global.css for now */
     </style>
     <link rel='preconnect' href='https://fonts.googleapis.com' />
     <link rel='preconnect' href='https://fonts.gstatic.com' crossorigin />

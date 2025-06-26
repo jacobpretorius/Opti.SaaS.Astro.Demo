@@ -1,5 +1,11 @@
 ---
 import HeaderLink from './HeaderLink.astro';
+import type { _Page } from '../gql/graphql';
+
+interface Props {
+  title: string;
+  navItems: _Page[];
+}
 
 const { title, navItems } = Astro.props;
 ---
@@ -9,9 +15,11 @@ const { title, navItems } = Astro.props;
     <h2><a href='/'>{title}</a></h2>
     <div class='internal-links'>
       {
-        navItems.map((page) => (
-          <HeaderLink href={page._metadata.url.default}>{page._metadata.displayName}</HeaderLink>
-        ))
+        navItems.map((page) => 
+          page._metadata?.url?.default && page._metadata?.displayName && (
+            <HeaderLink href={page._metadata.url.default}>{page._metadata.displayName}</HeaderLink>
+          )
+        )
       }
     </div>
     <div class='social-links'>

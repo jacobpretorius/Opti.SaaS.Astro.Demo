@@ -10,13 +10,6 @@ interface Props {
 
 const { pageContent, articles } = Astro.props;
 
-// const title = pageContent.Heading ?? 'Blog'; // Unused
-// let description = 'Read our latest articles.'; // Unused
-// if (pageContent.Description?.html) { // Use .html for RichText
-//   description = pageContent.Description.html.substring(0, 160); // Simplified, ideally use htmlToPlaintext utility
-// } else if (pageContent.Heading) {
-//   description = `Articles related to ${pageContent.Heading}`;
-// }
 
 const hasArticles = articles && articles.length > 0;
 ---
@@ -25,7 +18,6 @@ const hasArticles = articles && articles.length > 0;
 
 <h1>{pageContent._metadata?.displayName}</h1>
 
-{/* Use pageContent.Description.html from BlogPageType */}
 {
   pageContent.Description?.html && (
     <span data-epi-edit='Description'>
@@ -60,7 +52,6 @@ const hasArticles = articles && articles.length > 0;
 }
 
 <style>
-  /* Copied from static-site/src/layouts/BlogPage.astro */
   main {
     width: 960px;
   }
