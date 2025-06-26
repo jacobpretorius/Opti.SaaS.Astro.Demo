@@ -169,6 +169,49 @@ const ContentItemFields = gql`
         }
       }
     }
+    ... on BlankExperience {
+      composition {
+        nodeType
+        key
+        nodes {
+          nodeType
+          key
+          ... on CompositionComponentNode {
+            component {
+              _metadata {
+                types
+              }
+              ... on Experience_Carousel {
+                Carousel_Images {
+                  _metadata {
+                    url {
+                      default
+                    }
+                    displayName
+                  }
+                }
+              }
+              ... on Experience_Hero {
+                Heading {
+                  html
+                }
+                Description {
+                  html
+                }
+                Image {
+                  default
+                }
+              }
+              ... on Experience_RTE {
+                Text {
+                  html
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   }
 `;
 
@@ -231,6 +274,49 @@ export async function resolveContent(url: string, previewToken?: string){
                 _metadata {
                   url {
                     default
+                  }
+                }
+              }
+            }
+            ... on BlankExperience {
+              composition {
+                nodeType
+                key
+                nodes {
+                  nodeType
+                  key
+                  ... on CompositionComponentNode {
+                    component {
+                      _metadata {
+                        types
+                      }
+                      ... on Experience_Carousel {
+                        Carousel_Images {
+                          _metadata {
+                            url {
+                              default
+                            }
+                            displayName
+                          }
+                        }
+                      }
+                      ... on Experience_Hero {
+                        Heading {
+                          html
+                        }
+                        Description {
+                          html
+                        }
+                        Image {
+                          default
+                        }
+                      }
+                      ... on Experience_RTE {
+                        Text {
+                          html
+                        }
+                      }
+                    }
                   }
                 }
               }

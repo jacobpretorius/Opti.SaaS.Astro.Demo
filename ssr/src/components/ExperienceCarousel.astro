@@ -1,0 +1,97 @@
+---
+import { Image } from 'astro:assets';
+
+interface Props {
+  component: any; // We'll type this properly after seeing the data structure
+}
+
+const { component } = Astro.props;
+
+// Extract images from Carousel_Images content area
+const images = Array.isArray(component.Carousel_Images) 
+  ? component.Carousel_Images.filter((item: any) => item?._metadata?.url?.default)
+  : component.Carousel_Images?._metadata?.url?.default 
+    ? [component.Carousel_Images] 
+    : [];
+---
+
+<section class="experience-carousel">
+  {images.length > 0 ? (
+    <div class="carousel-container">
+      <div class="carousel-grid">
+        {images.map((image: any) => (
+          <div class="carousel-item">
+            {image._metadata?.url?.default && (
+              <Image
+                src={image._metadata.url.default}
+                alt={image._metadata?.displayName || 'Gallery image'}
+                width={400}
+                height={300}
+                inferSize={false}
+              />
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  ) : (
+    <div>
+      <p>No images found in carousel</p>
+      <details>
+        <summary>Debug: Component Data</summary>
+        <pre>{JSON.stringify(component, null, 2)}</pre>
+      </details>
+    </div>
+  )}
+</section>
+
+<style>
+  .experience-carousel {
+    margin: 2rem 0;
+  }
+  
+  
+  .carousel-container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .carousel-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    padding: 1rem;
+  }
+  
+  .carousel-item {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--box-shadow);
+    transition: transform 0.3s ease;
+    height: 350px;
+  }
+  
+  .carousel-item:hover {
+    transform: translateY(-5px);
+  }
+  
+  .carousel-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  
+  
+  @media (max-width: 768px) {
+    .carousel-grid {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+    
+    .carousel-item {
+      height: 250px;
+    }
+  }
+</style>

@@ -7,7 +7,8 @@ import StartPage from '../layouts/StartPage.astro';
 import StandardPage from '../layouts/StandardPage.astro';
 import ImageRightContentPage from '../layouts/ImageRightContentPage.astro';
 import BlogPage from '../layouts/BlogPage.astro';
-import ArticlePageLayout from '../layouts/ArticlePage.astro'; // Renamed to avoid conflict with type
+import ArticlePageLayout from '../layouts/ArticlePage.astro';
+import BlankExperience from '../layouts/BlankExperience.astro';
 
 interface Props {
   pageContent: ContentItemFieldsFragment;
@@ -26,3 +27,5 @@ const { pageContent, articles } = Astro.props;
 {pageContent.__typename === 'BlogPage' && <BlogPage pageContent={pageContent} articles={articles} />}
 
 {pageContent.__typename === 'ArticlePage' && <ArticlePageLayout pageContent={pageContent} />}
+
+{pageContent.__typename === 'BlankExperience' && <BlankExperience pageContent={pageContent} />}

@@ -1,0 +1,83 @@
+---
+import type { BlankExperience } from '../gql/graphql';
+import ExperienceHero from '../components/ExperienceHero.astro';
+import ExperienceCarousel from '../components/ExperienceCarousel.astro';
+import ExperienceRTE from '../components/ExperienceRTE.astro';
+
+interface Props {
+  pageContent: BlankExperience;
+}
+
+const { pageContent } = Astro.props;
+
+// Function to render Visual Builder composition
+function renderComposition(composition: any) {
+  if (!composition?.nodes) return [];
+  
+  return composition.nodes.filter((node: any) => 
+    node?.nodeType === 'component' && node?.component
+  );
+}
+
+const components = renderComposition(pageContent.composition);
+---
+
+<article class="visual-builder-page">
+  <h1>{pageContent._metadata?.displayName}</h1>
+  
+  {components.map((node: any) => {
+    const component = node.component;
+    
+    if (component?.__typename === 'Experience_Hero') {
+      return <ExperienceHero component={component} />;
+    }
+    
+    if (component?.__typename === 'Experience_Carousel') {
+      return <ExperienceCarousel component={component} />;
+    }
+    
+    if (component?.__typename === 'Experience_RTE') {
+      return <ExperienceRTE component={component} />;
+    }
+    
+    // Handle generic _Component type by checking the types metadata
+    if (component?.__typename === '_Component') {
+      const componentTypes = component._metadata?.types || [];
+      
+      if (componentTypes.includes('Experience_Carousel')) {
+        return <ExperienceCarousel component={component} />;
+      }
+      
+      if (componentTypes.includes('Experience_RTE')) {
+        return <ExperienceRTE component={component} />;
+      }
+      
+      return (
+        <div class="generic-component">
+          <h3>Generic Component</h3>
+          <p>Types: {componentTypes.join(', ')}</p>
+          <details>
+            <summary>Full Component Data</summary>
+            <pre>{JSON.stringify(component, null, 2)}</pre>
+          </details>
+        </div>
+      );
+    }
+    
+    // Handle other component types here
+    return <div>Unknown component type: {component?.__typename}</div>;
+  })}
+</article>
+
+<style>
+  .visual-builder-page {
+    max-width: 100%;
+    margin: 0 auto;
+  }
+  
+  .visual-builder-page h1 {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: rgb(var(--black));
+  }
+</style>
