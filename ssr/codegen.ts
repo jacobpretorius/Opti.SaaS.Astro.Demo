@@ -9,6 +9,7 @@ const config: CodegenConfig = {
       preset: 'client',
       config: {
         skipTypename: false, // Optional: if you don't want __typename fields
+        useTypeImports: true, // Generate type-only imports for verbatimModuleSyntax
       },
       presetConfig: {
         gqlTagName: 'gql', // To pick up queries tagged with gql from @apollo/client
