@@ -2,6 +2,10 @@
 
 This example site shows how Optimizely SaaS CMS can be used with Astro. To configure your own all you would need is to import the data into your CMS instance and plug in the relevant values in `.env` and the other configuration files.
 
+## Blog
+
+Follow the three part series that explains this in detail on World [Build a headless blog with Astro and Optimizely SaaS CMS ](https://world.optimizely.com/blogs/jacob-pretorius/dates/2024/5/build-a-headless-blog-with-astro-and-optimizely-saas-cms/)
+
 ## Static Site Version
 
 [https://opti-saas-astro-static-demo.vercel.app](https://opti-saas-astro-static-demo.vercel.app)
