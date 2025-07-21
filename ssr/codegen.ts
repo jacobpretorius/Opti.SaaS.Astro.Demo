@@ -3,7 +3,7 @@ import type { CodegenConfig } from '@graphql-codegen/cli'
 const config: CodegenConfig = {
   overwrite: true,
   schema: process.env.PUBLIC_APP_GRAPHQL_API,
-  documents: ['src/**/*.ts'], // Temporarily removed 'src/**/*.astro'
+  documents: ['src/**/*.ts'],
   generates: {
     'src/gql/': {
       preset: 'client',
