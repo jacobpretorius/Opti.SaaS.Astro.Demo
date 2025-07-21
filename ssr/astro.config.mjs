@@ -1,6 +1,7 @@
 import { defineConfig } from 'astro/config';
 
 import vercel from '@astrojs/vercel';
+import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
@@ -11,6 +12,6 @@ export default defineConfig({
       enabled: true,
     },
   }),
-  integrations: [],
+  integrations: [sitemap()],
   transitions: true,
 });
