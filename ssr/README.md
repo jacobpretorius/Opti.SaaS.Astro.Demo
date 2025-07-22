@@ -1,5 +1,7 @@
 # SSR / On Demand Rendering with Optimizely Content Graph & Astro
 
+[Read the blog on Optimizely World about this version here](https://world.optimizely.com/blogs/jacob-pretorius/dates/2025/7/build-a-headless-blog-with-astro-and-optimizely-saas-cms-part-4---ssr--visual-builder-experience/)
+
 This version of the Opti.SaaS.Astro.Demo has been configured to use Server-Side Rendering (SSR) or On-Demand Rendering with Astro and Vercel. This allows content changes from Optimizely Content Graph to be reflected live without requiring a new build and deployment for each content update.
 
 Additionally, this setup includes GraphQL code generation to provide TypeScript types for your GraphQL schema and operations, enhancing developer experience and type safety.
